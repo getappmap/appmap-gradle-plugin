@@ -1,0 +1,26 @@
+
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.4.31'
+    id 'java-gradle-plugin'
+    id 'idea'
+}
+
+group 'com.appland.appmap'
+version '0.5.3'
+
+gradlePlugin {
+    plugins {
+        simplePlugin {
+            id = 'com.appland.appmap-plugin'
+            implementationClass = 'com.appland.appmap.AppmapPlugin'
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.12'
+}
