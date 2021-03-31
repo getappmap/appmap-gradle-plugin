@@ -1,20 +1,29 @@
 package com.appland.appmap;
 
+import org.gradle.api.GradleException;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.ProjectLayout;
+import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.tasks.Input;
 import org.gradle.process.JavaForkOptions;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class AppmapAgentExtension {
 
+    public static final String DEFAULT_OUTPUT_DIRECTORY = "target/appmap";
+    private final Logger LOGGER = Logger.getLogger("com.appland.appmap");
     protected final Project project;
     private final Configuration agentConf;
     private final JavaForkOptions task;
     private final ProjectLayout layout;
-    private boolean enabled = true;
-    private String configFile = "appmap.yml";
-    private String outputDirectory = "tmp/appmap";
+    private final RegularFileProperty configFile;
+    private final DirectoryProperty outputDirectory;
     private boolean skip = false;
     private String debug = "info"; //Enable debug flags as a comma separated list. Accepts: info, hooks, http, locals Default: info
     private String debugFile = "target/appmap/agent.log";
@@ -25,27 +34,27 @@ public class AppmapAgentExtension {
         this.agentConf = agentConf;
         this.task = task;
         this.layout = project.getLayout();
-
+        this.configFile = project.getObjects().fileProperty().fileValue(new File("appmap.yml"));
+        this.outputDirectory = project.getObjects().directoryProperty().fileValue(new File(DEFAULT_OUTPUT_DIRECTORY));
+        try {
+            LOGGER.setLevel(Level.parse(debug.toUpperCase()));
+        } catch (Exception e) {
+            throw new GradleException("Debug level is not recognize: " + debug);
+        }
+        LOGGER.info( "Appmap Plugin Initialized.");
     }
 
     public Configuration getAgentConf() {
         return agentConf;
     }
 
+    @Input
     public boolean isSkip() {
         return skip;
     }
 
     public void setSkip(boolean skip) {
         this.skip = skip;
-    }
-
-    public String getOutputDirectory() {
-        return outputDirectory;
-    }
-
-    public void setOutputDirectory(String outputDirectory) {
-        this.outputDirectory = outputDirectory;
     }
 
     public String getDebug() {
@@ -72,24 +81,23 @@ public class AppmapAgentExtension {
         this.eventValueSize = eventValueSize;
     }
 
-    public String getConfigFile() {
+    public JavaForkOptions getTask() {
+        return task;
+    }
+
+    public DirectoryProperty getOutputDirectory() {
+        return outputDirectory;
+    }
+
+    public String getOutputDirectoryAsString() {
+        return outputDirectory.toString();
+    }
+
+    public RegularFileProperty getConfigFile() {
         return configFile;
     }
 
-    public void setConfigFile(String configFile) {
-        this.configFile = configFile;
-    }
-
-    @Input
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public JavaForkOptions getTask() {
-        return task;
+    public boolean isConfigFileValid() {
+        return configFile.get().getAsFile().exists() && Files.isReadable(configFile.get().getAsFile().toPath());
     }
 }

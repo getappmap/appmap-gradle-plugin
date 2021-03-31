@@ -44,13 +44,14 @@ public class AppmapPluginExtension {
         LOGGER.debug("Applying Appmap to " + taskName);
         final AppmapAgentExtension extension = project.getExtensions()
                 .create(TASK_EXTENSION_NAME, AppmapAgentExtension.class, project, agentConf, task);
-        //TODO: correctly set the directory to delete
-        task.getJvmArgumentProviders().add(new AppmapAgentCommandLineProvider(extension));
-        task.doFirst(new CleanAppmapDirectoryAction(
-                fs,
-                providers.provider(() -> extension.isEnabled()),
-                providers.provider(extension::getOutputDirectory)
-        ));
+        //TODO: set a do first task that deletes the directory
+
+            task.getJvmArgumentProviders().add(new AppmapAgentCommandLineProvider(extension));
+            task.doFirst(new CleanAppmapDirectoryAction(
+                    fs,
+                    providers.provider(() -> extension.isSkip()),
+                    providers.provider(extension::getOutputDirectoryAsString)
+            ));
     }
 
 }

@@ -31,8 +31,6 @@ public class AppmapPlugin implements Plugin<Project> {
         project.getPluginManager().apply(ReportingBasePlugin.class);
         this.project = project;
         createConfigurations();
-        ProjectInternal projectInternal = (ProjectInternal) project;
-       // AppmapAgentJar agent = instantiator.newInstance(AppmapAgentJar.class, projectInternal.getServices().get(FileOperations.class));
         final Configuration config = project.getConfigurations().getAt(AGENT_CONFIGURATION_NAME);
         AppmapPluginExtension extension = project.getExtensions().create(PLUGIN_EXTENSION_NAME, AppmapPluginExtension.class, project,  config);
         extension.setAgentVersion(DEFAULT_AGENT_VERSION);
@@ -56,7 +54,7 @@ public class AppmapPlugin implements Plugin<Project> {
         );
     }
 
-    private void applyToDefaultTasks(final AppmapPluginExtension extension) {
+    private void applyToDefaultTasks(final AppmapPluginExtension extension)  {
         project.getTasks().withType(Test.class).configureEach(extension::applyTo);
     }
 
