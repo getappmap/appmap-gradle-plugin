@@ -4,20 +4,17 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import org.gradle.api.GradleException;
 import org.gradle.api.Named;
+import org.gradle.api.logging.Logger;
+import org.gradle.api.logging.Logging;
 import org.gradle.api.tasks.Internal;
-import org.gradle.api.tasks.Nested;
-import org.gradle.api.tasks.Optional;
 import org.gradle.process.CommandLineArgumentProvider;
 import org.gradle.util.RelativePathUtil;
 
-import java.util.List;
-import java.util.logging.Logger;
-
-import javax.annotation.Nullable;
 import java.util.Collections;
+import java.util.List;
 
 public class AppmapAgentCommandLineProvider implements CommandLineArgumentProvider, Named {
-    private static final Logger LOGGER = java.util.logging.Logger.getLogger("com.appland.appmap");
+    private static final Logger LOGGER = Logging.getLogger(CommandLineArgumentProvider.class);
 
     private final AppmapAgentExtension appmap;
 
@@ -25,23 +22,9 @@ public class AppmapAgentCommandLineProvider implements CommandLineArgumentProvid
         this.appmap = appmap;
     }
 
-    @Nullable
-    @Optional
-    @Nested
-    public AppmapAgentExtension getAppMapAgent() {
-        return appmap.isSkip() ? appmap : null;
-    }
-
     @Override
     public Iterable<String> asArguments() {
-        Iterable<String> response = null;
-        if (appmap.isSkip()) {
-            response = getAsJvmArg();
-            LOGGER.info("argLine set to " + Joiner.on(",").join(response));
-        } else {
-            response = Collections.emptyList();
-        }
-        return response;
+        return getAsJvmArg();
     }
 
     @Internal
@@ -52,26 +35,27 @@ public class AppmapAgentCommandLineProvider implements CommandLineArgumentProvid
 
     @Internal
     public List getAsJvmArg() {
-
         if (!appmap.isConfigFileValid()) {
-            appmap.setSkip(false);
+            appmap.setSkip(true);
             throw new GradleException("Configuration file must exist and be readable: "
                     + appmap.getConfigFile().get().getAsFile().getPath());
         }
-        if (!appmap.isSkip()) {
+        if (appmap.shouldSkip()) {
+            LOGGER.warn("Appmap task was executed but but is disable, skip property set to " + appmap.shouldSkip());
+            return Collections.EMPTY_LIST;
+        } else {
             StringBuilder builder = new StringBuilder();
             builder.append("-javaagent:");
-            builder.append(RelativePathUtil.relativePath(appmap.getTask().getWorkingDir(), appmap.getAgentConf().getSingleFile()));
-            return ImmutableList.of(
+            builder.append(RelativePathUtil.relativePath(appmap.project.getProjectDir(), appmap.getAgentConf().getSingleFile()));
+            List argumentLn = ImmutableList.of(
                     builder.toString(),
                     "-Dappmap.config.file=" + appmap.getConfigFile().get().toString(),
                     "-Dappmap.output.directory=" + appmap.getOutputDirectory().get().toString(),
                     "-Dappmap.event.valueSize=" + appmap.getEventValueSize(),
                     "-Dappmap.debug=" + appmap.getDebug()
             );
-        } else {
-            LOGGER.info("Appmap plugin is disable, skip property set to " + appmap.isSkip());
-            return Collections.EMPTY_LIST;
+            LOGGER.lifecycle("Arguments line set to " + Joiner.on(",").join(argumentLn));
+            return argumentLn;
         }
     }
 }

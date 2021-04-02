@@ -17,6 +17,6 @@ public class AppmapPluginTest {
     project.getPlugins().apply("com.appland");
 
     // Then
-    //assertThat(project.getTasks().findByName("prepare-agent")).isNotNull();
+   // assertThat(project.getTasks().findByName("appmap")).isNotNull();
   }
 }

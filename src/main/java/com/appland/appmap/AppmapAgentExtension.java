@@ -16,11 +16,11 @@ import java.util.logging.Logger;
 
 public class AppmapAgentExtension {
 
-    public static final String DEFAULT_OUTPUT_DIRECTORY = "target/appmap";
+    public static final String DEFAULT_OUTPUT_DIRECTORY = "build/appmap";
     private final Logger LOGGER = Logger.getLogger("com.appland.appmap");
     protected final Project project;
     private final Configuration agentConf;
-    private final JavaForkOptions task;
+    private  JavaForkOptions task;
     private final ProjectLayout layout;
     private final RegularFileProperty configFile;
     private final DirectoryProperty outputDirectory;
@@ -44,12 +44,26 @@ public class AppmapAgentExtension {
         LOGGER.info( "Appmap Plugin Initialized.");
     }
 
+    public AppmapAgentExtension(Project project, Configuration agentConf) {
+        this.project = project;
+        this.agentConf = agentConf;
+        this.layout = project.getLayout();
+        this.configFile = project.getObjects().fileProperty().fileValue(new File("appmap.yml"));
+        this.outputDirectory = project.getObjects().directoryProperty().fileValue(new File(DEFAULT_OUTPUT_DIRECTORY));
+        try {
+            LOGGER.setLevel(Level.parse(debug.toUpperCase()));
+        } catch (Exception e) {
+            throw new GradleException("Debug level is not recognize: " + debug);
+        }
+        LOGGER.info( "Appmap Plugin Initialized.");
+    }
+
     public Configuration getAgentConf() {
         return agentConf;
     }
 
     @Input
-    public boolean isSkip() {
+    public boolean shouldSkip() {
         return skip;
     }
 
