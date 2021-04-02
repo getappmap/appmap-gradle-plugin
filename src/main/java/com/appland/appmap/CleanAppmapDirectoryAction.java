@@ -18,7 +18,7 @@ public class CleanAppmapDirectoryAction implements Action<Task> {
 
     @Override
     public void execute(Task task) {
-            //TODO: borrar todo el directorio no el archivo.
+            //TODO: delete the map files directory (in case it's outside the build directory).
             File coverageFile = new File(outputDirectory.get());
                 /*if (coverageFile == null) {
                     throw new GradleException(" destination file must not be null if output type is FILE");

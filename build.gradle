@@ -22,10 +22,16 @@ dependencies {
     implementation 'org.assertj:assertj-core:3.15.0'
 }
 
+pluginBundle {
+    website = 'https://appland.com'
+    vcsUrl = 'https://github.com/applandinc/appmap-gradle-plugin'
+    tags = ['appmap', 'appland', 'gradle', 'debugging']
+}
+
 gradlePlugin {
     plugins {
-        simplePlugin {
-            id = 'com.appland'
+        appmapPlugin {
+            id = 'com.appland.appmap'
             implementationClass = 'com.appland.appmap.AppmapPlugin'
         }
     }

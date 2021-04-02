@@ -35,7 +35,7 @@ public class AppmapPlugin implements Plugin<Project> {
                         project.getDependencies().create("com.appland:appmap-agent:1.0.3")// + extension.getToolVersion())
                 )
         );
-        AppmapAgentExtension extension = project.getExtensions().create(PLUGIN_EXTENSION_NAME, AppmapAgentExtension.class, project, config);
+        AppmapPluginExtension extension = project.getExtensions().create(PLUGIN_EXTENSION_NAME, AppmapPluginExtension.class, project, config);
         //extension.setAgentVersion(DEFAULT_AGENT_VERSION);*/
         addAppmapGradleTasks(extension);
     }
@@ -48,13 +48,13 @@ public class AppmapPlugin implements Plugin<Project> {
     }
 
 
-    private void addAppmapGradleTasks(AppmapAgentExtension extension) {
+    private void addAppmapGradleTasks(AppmapPluginExtension extension) {
         project.getPlugins().withType(JavaPlugin.class, javaPlugin -> {
             addAppmapTask(extension);
         });
     }
 
-    private void addAppmapTask(AppmapAgentExtension extension) {
+    private void addAppmapTask(AppmapPluginExtension extension) {
         project.getTasks().register(
                 "appmap",
                 AppmapPrepareAgentTask.class,

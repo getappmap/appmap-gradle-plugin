@@ -14,7 +14,7 @@ public class AppmapPluginTest {
     Project project = ProjectBuilder.builder().build();
 
     // When
-    project.getPlugins().apply("com.appland");
+    project.getPlugins().apply("com.appland.appmap");
 
     // Then
    // assertThat(project.getTasks().findByName("appmap")).isNotNull();

@@ -14,14 +14,12 @@ import java.nio.file.Files;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class AppmapAgentExtension {
+public class AppmapPluginExtension {
 
     public static final String DEFAULT_OUTPUT_DIRECTORY = "build/appmap";
     private final Logger LOGGER = Logger.getLogger("com.appland.appmap");
     protected final Project project;
     private final Configuration agentConf;
-    private  JavaForkOptions task;
-    private final ProjectLayout layout;
     private final RegularFileProperty configFile;
     private final DirectoryProperty outputDirectory;
     private boolean skip = false;
@@ -29,11 +27,9 @@ public class AppmapAgentExtension {
     private String debugFile = "target/appmap/agent.log";
     private int eventValueSize = 1024; //Specifies the length of a value string before truncation. If 0, truncation is disabled.
 
-    public AppmapAgentExtension(Project project, Configuration agentConf, JavaForkOptions task) {
+    public AppmapPluginExtension(Project project, Configuration agentConf, JavaForkOptions task) {
         this.project = project;
         this.agentConf = agentConf;
-        this.task = task;
-        this.layout = project.getLayout();
         this.configFile = project.getObjects().fileProperty().fileValue(new File("appmap.yml"));
         this.outputDirectory = project.getObjects().directoryProperty().fileValue(new File(DEFAULT_OUTPUT_DIRECTORY));
         try {
@@ -44,10 +40,9 @@ public class AppmapAgentExtension {
         LOGGER.info( "Appmap Plugin Initialized.");
     }
 
-    public AppmapAgentExtension(Project project, Configuration agentConf) {
+    public AppmapPluginExtension(Project project, Configuration agentConf) {
         this.project = project;
         this.agentConf = agentConf;
-        this.layout = project.getLayout();
         this.configFile = project.getObjects().fileProperty().fileValue(new File("appmap.yml"));
         this.outputDirectory = project.getObjects().directoryProperty().fileValue(new File(DEFAULT_OUTPUT_DIRECTORY));
         try {
@@ -93,10 +88,6 @@ public class AppmapAgentExtension {
 
     public void setEventValueSize(int eventValueSize) {
         this.eventValueSize = eventValueSize;
-    }
-
-    public JavaForkOptions getTask() {
-        return task;
     }
 
     public DirectoryProperty getOutputDirectory() {

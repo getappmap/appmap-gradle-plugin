@@ -16,9 +16,9 @@ import java.util.List;
 public class AppmapAgentCommandLineProvider implements CommandLineArgumentProvider, Named {
     private static final Logger LOGGER = Logging.getLogger(CommandLineArgumentProvider.class);
 
-    private final AppmapAgentExtension appmap;
+    private final AppmapPluginExtension appmap;
 
-    public AppmapAgentCommandLineProvider(AppmapAgentExtension appmap) {
+    public AppmapAgentCommandLineProvider(AppmapPluginExtension appmap) {
         this.appmap = appmap;
     }
 

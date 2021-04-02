@@ -3,7 +3,6 @@ package com.appland.appmap;
 import org.gradle.api.Action;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
-import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
 import org.gradle.api.tasks.testing.Test;
@@ -13,9 +12,9 @@ public class LoadAppmapAgentAction implements Action<Task> {
     private static final Logger LOGGER = Logging.getLogger(LoadAppmapAgentAction.class);
 
     private final Project project;
-    private final AppmapAgentExtension extension;
+    private final AppmapPluginExtension extension;
 
-    public LoadAppmapAgentAction(Project project, AppmapAgentExtension extension) {
+    public LoadAppmapAgentAction(Project project, AppmapPluginExtension extension) {
         this.project = project;
         this.extension = extension;
     }
@@ -33,7 +32,6 @@ public class LoadAppmapAgentAction implements Action<Task> {
         //TODO: set a do first task that deletes the directory
        /* task.doFirst(new CleanAppmapDirectoryAction(
                 fs,
-                providers.provider(() -> finalExtension.shouldSkip()),
                 providers.provider(extension::getOutputDirectoryAsString)
         ));*/
     }
