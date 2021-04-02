@@ -4,7 +4,6 @@ import org.gradle.api.GradleException;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.file.DirectoryProperty;
-import org.gradle.api.file.ProjectLayout;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.tasks.Input;
 import org.gradle.process.JavaForkOptions;
@@ -14,11 +13,14 @@ import java.nio.file.Files;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * This class holds the configuration parameters read from the target project gradle.build
+ */
 public class AppmapPluginExtension {
 
     public static final String DEFAULT_OUTPUT_DIRECTORY = "build/appmap";
-    private final Logger LOGGER = Logger.getLogger("com.appland.appmap");
     protected final Project project;
+    private final Logger LOGGER = Logger.getLogger("com.appland.appmap");
     private final Configuration agentConf;
     private final RegularFileProperty configFile;
     private final DirectoryProperty outputDirectory;
@@ -37,7 +39,7 @@ public class AppmapPluginExtension {
         } catch (Exception e) {
             throw new GradleException("Debug level is not recognize: " + debug);
         }
-        LOGGER.info( "Appmap Plugin Initialized.");
+        LOGGER.info("Appmap Plugin Initialized.");
     }
 
     public AppmapPluginExtension(Project project, Configuration agentConf) {
@@ -50,7 +52,7 @@ public class AppmapPluginExtension {
         } catch (Exception e) {
             throw new GradleException("Debug level is not recognize: " + debug);
         }
-        LOGGER.info( "Appmap Plugin Initialized.");
+        LOGGER.info("Appmap Plugin Initialized.");
     }
 
     public Configuration getAgentConf() {

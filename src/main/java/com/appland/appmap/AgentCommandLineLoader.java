@@ -13,12 +13,12 @@ import org.gradle.util.RelativePathUtil;
 import java.util.Collections;
 import java.util.List;
 
-public class AppmapAgentCommandLineProvider implements CommandLineArgumentProvider, Named {
+public class AgentCommandLineLoader implements CommandLineArgumentProvider, Named {
     private static final Logger LOGGER = Logging.getLogger(CommandLineArgumentProvider.class);
 
     private final AppmapPluginExtension appmap;
 
-    public AppmapAgentCommandLineProvider(AppmapPluginExtension appmap) {
+    public AgentCommandLineLoader(AppmapPluginExtension appmap) {
         this.appmap = appmap;
     }
 

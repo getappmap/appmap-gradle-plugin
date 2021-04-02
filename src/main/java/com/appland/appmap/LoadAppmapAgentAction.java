@@ -8,6 +8,9 @@ import org.gradle.api.logging.Logging;
 import org.gradle.api.tasks.testing.Test;
 import org.gradle.process.JavaForkOptions;
 
+/**
+ * This action if called sets a JvmArgumentProvider to the "test" task of the build
+ */
 public class LoadAppmapAgentAction implements Action<Task> {
     private static final Logger LOGGER = Logging.getLogger(LoadAppmapAgentAction.class);
 
@@ -25,10 +28,10 @@ public class LoadAppmapAgentAction implements Action<Task> {
     }
 
     private <T extends Task & JavaForkOptions> void applyTo(final T task) {
-        if (task instanceof AppmapPrepareAgentTask) return;
+        if (task instanceof AppmapTask) return;
         final String taskName = task.getName();
         LOGGER.lifecycle("Attaching Appmap Agent to task: " + taskName);
-        task.getJvmArgumentProviders().add(new AppmapAgentCommandLineProvider(extension));
+        task.getJvmArgumentProviders().add(new AgentCommandLineLoader(extension));
         //TODO: set a do first task that deletes the directory
        /* task.doFirst(new CleanAppmapDirectoryAction(
                 fs,

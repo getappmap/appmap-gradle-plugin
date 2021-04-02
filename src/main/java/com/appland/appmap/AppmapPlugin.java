@@ -5,21 +5,17 @@ import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.ReportingBasePlugin;
-import org.gradle.internal.reflect.Instantiator;
 import org.gradle.language.base.plugins.LifecycleBasePlugin;
 
-import javax.inject.Inject;
-
+/**
+ * The actual plugin definition for appmap plugin.
+ */
 public class AppmapPlugin implements Plugin<Project> {
 
     public static final String DEFAULT_AGENT_VERSION = "latest";
     public static final String AGENT_CONFIGURATION_NAME = "appmapAgent";
     public static final String PLUGIN_EXTENSION_NAME = "appmap";
     private Project project;
-
-    @Inject
-    public AppmapPlugin(Instantiator instantiator) {
-    }
 
     @Override
     public void apply(Project project) {
@@ -54,10 +50,16 @@ public class AppmapPlugin implements Plugin<Project> {
         });
     }
 
+    /**
+     * This is the central method of the app map plugin, here the task gets registered, the load appmap agent action
+     * gets associated to it, and the configuration is set.
+     *
+     * @param extension
+     */
     private void addAppmapTask(AppmapPluginExtension extension) {
         project.getTasks().register(
                 "appmap",
-                AppmapPrepareAgentTask.class,
+                AppmapTask.class,
                 prepareAgentTask -> {
                     prepareAgentTask.doFirst(new LoadAppmapAgentAction(project, extension));
                     prepareAgentTask.setGroup(LifecycleBasePlugin.BUILD_GROUP);
