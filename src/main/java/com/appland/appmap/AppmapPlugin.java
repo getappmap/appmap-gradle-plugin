@@ -12,7 +12,7 @@ import org.gradle.language.base.plugins.LifecycleBasePlugin;
  */
 public class AppmapPlugin implements Plugin<Project> {
 
-    public static final String DEFAULT_AGENT_VERSION = "latest";
+    public static final String DEFAULT_AGENT_VERSION = "latest.release";
     public static final String AGENT_CONFIGURATION_NAME = "appmapAgent";
     public static final String PLUGIN_EXTENSION_NAME = "appmap";
     private Project project;
@@ -28,7 +28,7 @@ public class AppmapPlugin implements Plugin<Project> {
         config.setDescription("Appmap agent to generate app map data.");
         config.defaultDependencies(dependencies ->
                 dependencies.add(
-                        project.getDependencies().create("com.appland:appmap-agent:1.0.3")// + extension.getToolVersion())
+                        project.getDependencies().create("com.appland:appmap-agent:"  + DEFAULT_AGENT_VERSION)
                 )
         );
         AppmapPluginExtension extension = project.getExtensions().create(PLUGIN_EXTENSION_NAME, AppmapPluginExtension.class, project, config);
