@@ -66,7 +66,7 @@ public class AppmapPlugin implements Plugin<Project> {
                             new ValidateConfigAction(extension.getConfigFile().getAsFile())
                     );
                     prepareAgentTask.doLast(
-                            new CleanAppmapDirectoryAction(
+                            new CleanOutputDirectoryAction(
                                     ((ProjectInternal) project).getServices().get(FileSystemOperations.class),
                                     extension.getOutputDirectory().getAsFile())
                     );
