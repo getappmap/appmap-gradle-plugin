@@ -10,7 +10,7 @@ import org.gradle.api.tasks.Internal;
 import org.gradle.process.CommandLineArgumentProvider;
 import org.gradle.util.RelativePathUtil;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AgentCommandLineLoader implements CommandLineArgumentProvider, Named {
@@ -27,6 +27,7 @@ public class AgentCommandLineLoader implements CommandLineArgumentProvider, Name
         return getAsJvmArg();
     }
 
+    @SuppressWarnings("NullableProblems")
     @Internal
     @Override
     public String getName() {
@@ -34,7 +35,7 @@ public class AgentCommandLineLoader implements CommandLineArgumentProvider, Name
     }
 
     @Internal
-    public List getAsJvmArg() {
+    public List<String> getAsJvmArg() {
         if (!appmap.isConfigFileValid()) {
             appmap.setSkip(true);
             throw new GradleException("Configuration file must exist and be readable: "
@@ -42,13 +43,14 @@ public class AgentCommandLineLoader implements CommandLineArgumentProvider, Name
         }
         if (appmap.shouldSkip()) {
             LOGGER.warn("Appmap task was executed but but is disable, skip property set to " + appmap.shouldSkip());
-            return Collections.EMPTY_LIST;
+            return new ArrayList<>();
         } else {
-            StringBuilder builder = new StringBuilder();
-            builder.append("-javaagent:");
-            builder.append(RelativePathUtil.relativePath(appmap.project.getProjectDir(), appmap.getAgentConf().getSingleFile()));
-            List argumentLn = ImmutableList.of(
-                    builder.toString(),
+            String builder = "-javaagent:" +
+                    RelativePathUtil.relativePath(
+                            appmap.project.getProjectDir(), appmap.getAgentConf().getSingleFile()
+                    );
+            List<String> argumentLn = ImmutableList.of(
+                    builder,
                     "-Dappmap.config.file=" + appmap.getConfigFile().get().toString(),
                     "-Dappmap.output.directory=" + appmap.getOutputDirectory().get().toString(),
                     "-Dappmap.event.valueSize=" + appmap.getEventValueSize(),
