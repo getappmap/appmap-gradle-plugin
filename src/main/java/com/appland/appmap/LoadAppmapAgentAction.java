@@ -32,11 +32,6 @@ public class LoadAppmapAgentAction implements Action<Task> {
         final String taskName = task.getName();
         LOGGER.lifecycle("Attaching Appmap Agent to task: " + taskName);
         task.getJvmArgumentProviders().add(new AgentCommandLineLoader(extension));
-        //TODO: set a do first task that deletes the directory
-       /* task.doFirst(new CleanAppmapDirectoryAction(
-                fs,
-                providers.provider(extension::getOutputDirectoryAsString)
-        ));*/
     }
 
 }

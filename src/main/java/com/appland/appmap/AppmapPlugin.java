@@ -3,6 +3,8 @@ package com.appland.appmap;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.file.FileSystemOperations;
+import org.gradle.api.internal.project.ProjectInternal;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.ReportingBasePlugin;
 import org.gradle.language.base.plugins.LifecycleBasePlugin;
@@ -43,10 +45,9 @@ public class AppmapPlugin implements Plugin<Project> {
         agentConf.setDescription("Appmap agent to generate app map data.");
     }
 
-
     private void addAppmapGradleTasks(AppmapPluginExtension extension) {
         project.getPlugins().withType(JavaPlugin.class, javaPlugin -> {
-            addAppmapTask(extension);
+            addAppmapTasks(extension);
         });
     }
 
@@ -56,17 +57,37 @@ public class AppmapPlugin implements Plugin<Project> {
      *
      * @param extension
      */
-    private void addAppmapTask(AppmapPluginExtension extension) {
+    private void addAppmapTasks(AppmapPluginExtension extension) {
         project.getTasks().register(
                 "appmap",
                 AppmapTask.class,
                 prepareAgentTask -> {
-                    prepareAgentTask.doFirst(new LoadAppmapAgentAction(project, extension));
+                    prepareAgentTask.doFirst(
+                            new ValidateConfigAction(extension.getConfigFile().getAsFile())
+                    );
+                    prepareAgentTask.doLast(
+                            new CleanAppmapDirectoryAction(
+                                    ((ProjectInternal) project).getServices().get(FileSystemOperations.class),
+                                    extension.getOutputDirectory().getAsFile())
+                    );
+                    prepareAgentTask.doLast(new LoadAppmapAgentAction(project, extension));
                     prepareAgentTask.setGroup(LifecycleBasePlugin.BUILD_GROUP);
                     prepareAgentTask.setDescription(
                             String.format("Attaches Appmap Agent to the Test task")
                     );
                 });
-    }
 
+        project.getTasks().register(
+                "validate-config",
+                validateConfigTask ->{
+                    validateConfigTask.doFirst(
+                            new ValidateConfigAction(extension.getConfigFile().getAsFile())
+                    );
+                    validateConfigTask.setGroup(LifecycleBasePlugin.BUILD_GROUP);
+                    validateConfigTask.setDescription(
+                            String.format("Searches Appmap Agent config file and validates it")
+                    );
+                }
+        );
+    }
 }
