@@ -67,7 +67,7 @@ for details.
 
 ## Plugin Tasks
 
-- `prepare-agent` - adds the AppMap Java agent to the JVM
+- `appmap` - adds the AppMap Java agent to the JVM, must be explicitly called
 - `validate-config` - Validates if appmap.yml file exist, and it's readable
 
 ## Plugin configuration
@@ -87,7 +87,7 @@ for details.
 
 **I have no `build/appmap` directory**  
 It's likely that the agent is not running. Double check the `appmap` task 
-is being explicit called and if the JVM is being forked at any point, make
+is being explicitly called and if the JVM is being forked at any point, make
 sure the `javaagent` argument is being propagated to the new process.
 
 **`*.appmap.json` files are present, but appear empty or contain little data**  
