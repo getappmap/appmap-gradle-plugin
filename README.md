@@ -43,16 +43,16 @@ Next, add the following plugin definition to your `build.gradle`:
 // Set up AppMap agent, default parameters 
         appmap {
             configFile = file("$projectDir/appmap.yml")
-            outputDirectory = file("$projectDir/build/appmap")
+            outputDirectory = file("$buildDir/appmap")
             skip = false
             debug = "info"
-            debugFile = "build/appmap/agent.log"
+            debugFile = "$buildDir/appmap/agent.log"
             eventValueSize = 1024
         }
 ```
 
 That's all! The AppMap agent will automatically record your tests when you run
-`gradle appmap test`. By default, AppMap files are output to `build/appmap`.
+`gradle appmap test`. By default, AppMap files are output to `$buildDir/appmap`.
 
 Using Visual Studio Code? [Download the AppMap extension](https://marketplace.visualstudio.com/items?itemName=appland.appmap)
 to view AppMap files in your IDE.
@@ -74,18 +74,18 @@ for details.
 
 - `configFile` Path to the `appmap.yml` config file. Default: _./appmap.yml_
 - `outputDirectory` Output directory for `.appmap.json` files. Default:
-  _./build/appmap_
+  _.$buildDir/appmap_
 - `skip` Agent won't record tests when set to true. Default: _false_
 - `debug` Enable debug flags as a comma separated list. Accepts: `info`,
   `hooks`, `http`, `locals` Default: _info_
 - `debugFile` Specify where to output debug logs. Default:
-  _build/appmap/agent.log_
+  _$buildDir/appmap/agent.log_
 - `eventValueSize` Specifies the length of a value string before truncation
   occurs. If set to 0, truncation is disabled. Default: _1024_
 
 ## Troubleshooting
 
-**I have no `build/appmap` directory**  
+**I have no `$buildDir/appmap` directory**  
 It's likely that the agent is not running. Double check the `appmap` task 
 is being explicitly called and if the JVM is being forked at any point, make
 sure the `javaagent` argument is being propagated to the new process.
