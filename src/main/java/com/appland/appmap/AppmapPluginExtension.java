@@ -66,7 +66,7 @@ public class AppmapPluginExtension {
     this.outputDirectory = project.getObjects().directoryProperty()
         .fileValue(new File(DEFAULT_OUTPUT_DIRECTORY));
     try {
-      logger.setLevel(Level.parse(debug.toUpperCase()));
+      logger.setLevel(Level.INFO);
     } catch (Exception e) {
       throw new GradleException("Debug level is not recognize: " + debug);
     }
