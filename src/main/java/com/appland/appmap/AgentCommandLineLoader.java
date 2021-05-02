@@ -1,9 +1,12 @@
 package com.appland.appmap;
 
+import static java.lang.String.format;
+
 import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.gradle.api.GradleException;
 import org.gradle.api.Named;
 import org.gradle.api.logging.Logger;
@@ -13,11 +16,12 @@ import org.gradle.process.CommandLineArgumentProvider;
 import org.gradle.util.RelativePathUtil;
 
 /**
- * This class is the actual responsible to build the JVM args to run the Appmap Agent.
+ * This class is the actual responsible of building the JVM args to run the Appmap Agent.
  */
 public class AgentCommandLineLoader implements CommandLineArgumentProvider, Named {
 
   private static final Logger LOGGER = Logging.getLogger(CommandLineArgumentProvider.class);
+  private static final List<String> DEBUG_FLAGS = Arrays.asList("hooks", "locals", "http");
 
   private final AppmapPluginExtension appmap;
 
@@ -55,19 +59,36 @@ public class AgentCommandLineLoader implements CommandLineArgumentProvider, Name
           .shouldSkip());
       return new ArrayList<>();
     } else {
-      String builder = "-javaagent:"
+      String javaAgentArg = "-javaagent:"
           + RelativePathUtil.relativePath(
           appmap.project.getProjectDir(), appmap.getAgentConf().getSingleFile()
       );
-      List<String> argumentLn = ImmutableList.of(
-          builder,
-          "-Dappmap.config.file=" + appmap.getConfigFile().get().toString(),
-          "-Dappmap.output.directory=" + appmap.getOutputDirectory().get().toString(),
-          "-Dappmap.event.valueSize=" + appmap.getEventValueSize(),
-          "-Dappmap.debug=" + appmap.getDebug()
-      );
+
+      List<String> argumentLn = new ArrayList<>();
+      argumentLn.add(javaAgentArg);
+      argumentLn.add("-Dappmap.config.file=" + appmap.getConfigFile().get().toString());
+      argumentLn.add("-Dappmap.output.directory=" + appmap.getOutputDirectory().get().toString());
+      argumentLn.add("-Dappmap.event.valueSize=" + appmap.getEventValueSize());
+      argumentLn.addAll(buildDebugParams());
       LOGGER.lifecycle("Arguments line set to " + Joiner.on(",").join(argumentLn));
       return argumentLn;
     }
+  }
+
+  private List<String> buildDebugParams() {
+    List<String> debugArgs = new ArrayList<>();
+    if (appmap.getDebug() != null && !appmap.getDebug().isEmpty()) {
+      final List<String> debugTokens = new ArrayList<>(
+          Arrays.asList(appmap.getDebug().split("[,|\\s]")));
+      for (String token : debugTokens) {
+        if (DEBUG_FLAGS.contains(token)) {
+          debugArgs.add("-Dappmap.debug." + token);
+        }
+      }
+      debugArgs.add(0, "-Dappmap.debug");
+      debugArgs.add(0, "-Dappmap.debug.file=" + StringEscapeUtils
+          .escapeJava(format("%s", appmap.getDebugFile())));
+    }
+    return debugArgs;
   }
 }

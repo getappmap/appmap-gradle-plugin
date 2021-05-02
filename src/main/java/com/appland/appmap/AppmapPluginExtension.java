@@ -21,36 +21,14 @@ public class AppmapPluginExtension {
   protected final Project project;
   private final Logger logger = Logger.getLogger("com.appland.appmap");
   private final Configuration agentConf;
-  private final RegularFileProperty configFile;
-  private final DirectoryProperty outputDirectory;
+  private RegularFileProperty configFile;
+  private DirectoryProperty outputDirectory;
   private boolean skip = false;
-  private String debug = "info";
   //Enable debug flags as a comma separated list. Accepts: info, hooks, http, locals Default: info
-  private String debugFile = "target/appmap/agent.log";
-  private int eventValueSize = 1024;
+  private String debug = "info";
+  private RegularFileProperty debugFile;
   //Specifies the length of a value string before truncation. If 0, truncation is disabled.
-
-  /**
-   * Constructor method, receives the project, configuration and fork options, read and provide the
-   * rest of the configuration to the AppmapPlugin class.
-   *
-   * @param project Actual project object representation.
-   * @param agentConf Holdder of the project configuration.
-   * @param task  Fork options for the jvm
-   */
-  public AppmapPluginExtension(Project project, Configuration agentConf, JavaForkOptions task) {
-    this.project = project;
-    this.agentConf = agentConf;
-    this.configFile = project.getObjects().fileProperty().fileValue(new File("appmap.yml"));
-    this.outputDirectory = project.getObjects().directoryProperty()
-        .fileValue(new File(DEFAULT_OUTPUT_DIRECTORY));
-    try {
-      logger.setLevel(Level.parse(debug.toUpperCase()));
-    } catch (Exception e) {
-      throw new GradleException("Debug level is not recognize: " + debug);
-    }
-    logger.info("Appmap Plugin Initialized.");
-  }
+  private int eventValueSize = 1024;
 
   /**
    * Constructor method, receives the project, configuration and fork options, read and provide the
@@ -65,11 +43,8 @@ public class AppmapPluginExtension {
     this.configFile = project.getObjects().fileProperty().fileValue(new File("appmap.yml"));
     this.outputDirectory = project.getObjects().directoryProperty()
         .fileValue(new File(DEFAULT_OUTPUT_DIRECTORY));
-    try {
-      logger.setLevel(Level.INFO);
-    } catch (Exception e) {
-      throw new GradleException("Debug level is not recognize: " + debug);
-    }
+    this.debugFile = project.getObjects().fileProperty()
+        .fileValue(new File("build/appmap/agent.log"));
     logger.info("Appmap Plugin Initialized.");
   }
 
@@ -94,11 +69,11 @@ public class AppmapPluginExtension {
     this.debug = debug;
   }
 
-  public String getDebugFile() {
+  public RegularFileProperty getDebugFile() {
     return debugFile;
   }
 
-  public void setDebugFile(String debugFile) {
+  public void setDebugFile(RegularFileProperty debugFile) {
     this.debugFile = debugFile;
   }
 
