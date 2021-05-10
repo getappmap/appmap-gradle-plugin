@@ -1,10 +1,8 @@
 package com.appland.appmap;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import org.gradle.api.Project;
 import org.gradle.testfixtures.ProjectBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 
 public class AppmapPluginTest {
@@ -16,7 +14,5 @@ public class AppmapPluginTest {
     // When
     project.getPlugins().apply("com.appland.appmap");
 
-    // Then
-   // assertThat(project.getTasks().findByName("appmap")).isNotNull();
   }
 }
