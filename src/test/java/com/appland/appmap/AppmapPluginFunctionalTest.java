@@ -37,6 +37,7 @@ public class AppmapPluginFunctionalTest {
         BuildResult result = GradleRunner.create()
                 .withProjectDir(testProjectDir)
                 .withArguments("validate-config")
+                .withPluginClasspath()
                 .buildAndFail();
 
         assertTrue(result.getOutput().contains("not found or not readable."));
@@ -52,6 +53,7 @@ public class AppmapPluginFunctionalTest {
         BuildResult result = GradleRunner.create()
                 .withProjectDir(testProjectDir)
                 .withArguments("validate-config")
+                .withPluginClasspath()
                 .build();
 
         assertTrue(result.getOutput().contains("BUILD SUCCESSFUL"));
@@ -67,6 +69,7 @@ public class AppmapPluginFunctionalTest {
         BuildResult result = GradleRunner.create()
                 .withProjectDir(testProjectDir)
                 .withArguments("appmap")
+                .withPluginClasspath()
                 .build();
 
         assertTrue(result.getOutput().contains("BUILD SUCCESSFUL"));
@@ -89,34 +92,17 @@ public class AppmapPluginFunctionalTest {
 
     public static final String APPMAP_CONFIGFILE_CONTENT = "name: domain\npackages:\n  - path: lead";
 
-    public static final String BUILD_FILE_CONTENT = "buildscript {\n" +
-            "    repositories {\n" +
-            "        mavenLocal()\n" +
-            "    }\n" +
-            "    dependencies {\n" +
-            "        classpath \"com.appland:appmap-gradle-plugin:1.0.3\"\n" +
-            "    }\n" +
+    public static final String BUILD_FILE_CONTENT = "plugins {\n" +
+            "    id 'java'\n" +
+            "    id 'com.appland.appmap'\n" +
             "}\n" +
-            "\n" +
-            "plugins {\n" +
-            "    id 'org.jetbrains.kotlin.jvm' version '1.4.31'\n" +
-            "}\n" +
-            "\n" +
-            "group 'com.appland.testproject'\n" +
-            "version '1.0-SNAPSHOT'\n" +
-            "\n" +
-            "repositories {\n" +
-            "    mavenCentral()\n" +
-            "}\n" +
-            "\n" +
-            "apply plugin: 'com.appland.appmap'\n" +
             "\n" +
             "appmap {\n" +
             "    configFile = file(\"$projectDir/appmap.yml\")\n" +
-            "    outputDirectory = file(\"$projectDir/build/appmap3\")\n" +
+            "    outputDirectory = file(\"$projectDir/build/appmap\")\n" +
             "    skip = false\n" +
             "    debug = \"info\"\n" +
-            "    debugFile = \"build/appmap/agent.log\"\n" +
+            "    debugFile = file(\"build/appmap/agent.log\")\n" +
             "    eventValueSize = 1024\n" +
             "}";
 
