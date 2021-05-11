@@ -30,7 +30,10 @@ def paramVersion        = findProperty('paramVersion')
 def travisVersion       = System.getenv("TRAVIS_BRANCH")
 def versionLikeRegexp   = /^\d+\.\d+.*/
 def travisVersionOK     = travisVersion && (travisVersion ==~ versionLikeRegexp)
+
 paramVersion = paramVersion ?: ( travisVersionOK ? travisVersion : defVersion )
+version = paramVersion
+group = paramGroupId
 
 test {
     useJUnitPlatform()
@@ -125,6 +128,6 @@ if (project.hasProperty("signingKey")) {
         def signingKey = paramSignKey
         def signingPassword = paramSignPassword
         useInMemoryPgpKeys(signingKey, signingPassword)
-        sign publishing.publications.appMapAgent
+        sign publishing.publications.appMapPlugin
     }
 }
