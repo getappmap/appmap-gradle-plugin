@@ -2,12 +2,35 @@ plugins {
     id 'groovy'
     id 'java'
     id 'java-gradle-plugin'
-    id 'maven-publish'
     id 'idea'
+    id 'io.github.gradle-nexus.publish-plugin' version '1.0.0'
+    id 'signing'
 }
 
-project.group           = 'com.appland'
-project.version         = '1.0.3'
+def defGroupId       = 'com.appland'
+def defArtifactId    = 'appmap-gradle-plugin'
+def defName          = 'AppMap Gradle Plugin'
+def defVersion       = "0.1.0"
+def defDescription   = 'Gradle plugin to record AppMaps'
+def defGitSlug       =  "applandinc/appmap-gradle-plugin"
+def defMavenRepo     = 'https://s01.oss.sonatype.org'
+
+def paramSignKey        = findProperty('signingKey')
+def paramSignPassword   = findProperty("signingPassword")
+def paramRepoUsername   = findProperty('ossrhUsername')
+def paramRepoPassword   = findProperty('ossrhPassword')
+def paramDescription    = findProperty('artifactDescription')   ?: defDescription
+def paramName           = findProperty('artifactName')          ?: defName
+def paramGroupId        = findProperty('publicationGroupId')    ?: defGroupId
+def paramArtifactId     = findProperty('publicationArtifactId') ?: defArtifactId
+def paramGitSlug        = System.getenv("TRAVIS_REPO_SLUG")     ?: defGitSlug
+def paramMavenRepo      = findProperty('mavenRepo')             ?: defMavenRepo
+
+def paramVersion        = findProperty('paramVersion')
+def travisVersion       = System.getenv("TRAVIS_BRANCH")
+def versionLikeRegexp   = /^\d+\.\d+.*/
+def travisVersionOK     = travisVersion && (travisVersion ==~ versionLikeRegexp)
+paramVersion = paramVersion ?: ( travisVersionOK ? travisVersion : defVersion )
 
 test {
     useJUnitPlatform()
@@ -33,5 +56,75 @@ gradlePlugin {
             id = 'com.appland.appmap'
             implementationClass = 'com.appland.appmap.AppmapPlugin'
         }
+    }
+}
+
+apply plugin: 'java'
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
+apply plugin: 'maven-publish'
+publishing {
+    publications {
+        appMapPlugin(MavenPublication) {
+            groupId     paramGroupId
+            artifactId  paramArtifactId
+            version     paramVersion
+
+            from components.java
+
+            pom {
+                name        = paramName
+                description = paramDescription
+                version     = paramVersion
+                url         = "https://appland.com"
+
+                licenses {
+                    license {
+                        name = "MIT"
+                        url  = "https://raw.githubusercontent.com/$paramGitSlug/master/LICENSE.txt"
+                    }
+                }
+                developers {
+                    developer {
+                        // id = "kgilpin"
+                        name = "Kevin Gilpin"
+                        email = "kevin@appland.com"
+                        organization = "AppLand Inc."
+                        url="https://dev.to/kgilpin"
+                    }
+                }
+                scm {
+                    connection = "scm:git:git://github.com/${paramGitSlug}.git"
+                    developerConnection = "scm:git:ssh://github.com:${paramGitSlug}.git"
+                    url = "https://github.com/${paramGitSlug}/tree/master"
+                }
+            }
+        }
+    }
+}
+
+nexusPublishing {
+    repositories {
+        sonatype {
+            nexusUrl              = uri(paramMavenRepo + "/service/local/")
+            snapshotRepositoryUrl = uri(paramMavenRepo + "/content/repositories/snapshots" )
+            username              = paramRepoUsername
+            password              = paramRepoPassword
+        }
+    }
+}
+
+
+if (project.hasProperty("signingKey")) {
+    apply plugin: 'signing'
+
+    signing {
+        def signingKey = paramSignKey
+        def signingPassword = paramSignPassword
+        useInMemoryPgpKeys(signingKey, signingPassword)
+        sign publishing.publications.appMapAgent
     }
 }
