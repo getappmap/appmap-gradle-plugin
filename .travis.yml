@@ -32,4 +32,5 @@ deploy:
   - provider: script
     script: semantic-release
     on:
+      condition: false
       branch: master
