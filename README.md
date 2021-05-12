@@ -1,11 +1,11 @@
 # AppMap Gradle plugin
 
 - [AppMap Gradle plugin](#appmap-gradle-plugin)
-    - [Quickstart](#quickstart)
-    - [About](#about)
-    - [Plugin tasks](#plugin-tasks)
-    - [Plugin configuration](#plugin-configuration)
-    - [Troubleshooting](#troubleshooting)
+  - [Quickstart](#quickstart)
+  - [About](#about)
+  - [Plugin Tasks](#plugin-tasks)
+  - [Plugin configuration](#plugin-configuration)
+  - [Troubleshooting](#troubleshooting)
 
 ## Quickstart
 
@@ -37,16 +37,17 @@ packages:
 ```
 
 Next, add the following plugin definition to your `build.gradle`:
+
 ```groovy
 // Apply the plugin
         apply plugin: 'com.appland.appmap'
-// Set up AppMap agent, default parameters 
+// Set up AppMap agent, default parameters
         appmap {
             configFile = file("$projectDir/appmap.yml")
             outputDirectory = file("$buildDir/appmap")
             skip = false
             debug = "info"
-            debugFile = "$buildDir/appmap/agent.log"
+            debugFile = file("$buildDir/appmap/agent.log")
             eventValueSize = 1024
         }
 ```
@@ -54,7 +55,8 @@ Next, add the following plugin definition to your `build.gradle`:
 That's all! The AppMap agent will automatically record your tests when you run
 `gradle appmap test`. By default, AppMap files are output to `$buildDir/appmap`.
 
-Using Visual Studio Code? [Download the AppMap extension](https://marketplace.visualstudio.com/items?itemName=appland.appmap)
+Using Visual Studio Code?
+[Download the AppMap extension](https://marketplace.visualstudio.com/items?itemName=appland.appmap)
 to view AppMap files in your IDE.
 
 ## About
@@ -86,9 +88,9 @@ for details.
 ## Troubleshooting
 
 **I have no `$buildDir/appmap` directory**  
-It's likely that the agent is not running. Double check the `appmap` task 
-is being explicitly called and if the JVM is being forked at any point, make
-sure the `javaagent` argument is being propagated to the new process.
+It's likely that the agent is not running. Double check the `appmap` task is
+being explicitly called and if the JVM is being forked at any point, make sure
+the `javaagent` argument is being propagated to the new process.
 
 **`*.appmap.json` files are present, but appear empty or contain little data**  
 Double check your `appmap.yml`. This usually indicates that the agent is
@@ -97,15 +99,17 @@ functioning as expected, but no classes or methods referenced in the
 packages being recorded. Follow this link for more information:
 https://github.com/applandinc/appmap-java#configuration
 
-**My tests aren't running, or I'm seeing `The forked VM terminated without
-properly saying goodbye.`**  
-Check the agent log (defaults to `target/appmap/agent.log`)
-This is typically indicative of an invalid `appmap.yml` configuration.
+**My tests aren't running, or I'm seeing
+`The forked VM terminated without properly saying goodbye.`**  
+Check the agent log (defaults to `target/appmap/agent.log`) This is typically
+indicative of an invalid `appmap.yml` configuration.
 
 **I have a test failure that only occurs while the agent is attached**  
-Please open an issue at [applandinc/appmap-java](https://github.com/applandinc/appmap-java/issues).
+Please open an issue at
+[applandinc/appmap-java](https://github.com/applandinc/appmap-java/issues).
 Attach a link to the source code or repository (if available), as well as any
 other relevant information including:
+
 - the contents of `appmap.yml`
 - the run command used (such as `gradle appmap test`)
 - output of the run command
