@@ -18,7 +18,7 @@ plugins:
         - CHANGELOG.md
         - build.gradle
   - - '@semantic-release/exec'
-    - publishCmd: ./gradlew publish
+    - publishCmd: ./gradlew publish publishPlugins
   - - '@semantic-release/github'
     - assets:
         - build/libs/*.jar
