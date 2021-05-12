@@ -11,7 +11,7 @@ plugins {
 def defGroupId       = 'com.appland'
 def defArtifactId    = 'appmap-gradle-plugin'
 def defName          = 'AppMap Gradle Plugin'
-def defVersion       = "1.0.0"
+def defVersion       = "1.0.1"
 def defDescription   = 'Gradle plugin to record AppMaps'
 def defGitSlug       =  "applandinc/appmap-gradle-plugin"
 def defMavenRepo     = 'https://s01.oss.sonatype.org'

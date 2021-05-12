@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/applandinc/appmap-gradle-plugin/compare/v1.0.0...v1.0.1) (2021-05-12)
+
+
+### Bug Fixes
+
+* Publish to plugins.gradle.org ([d0ec88d](https://github.com/applandinc/appmap-gradle-plugin/commit/d0ec88dcc5db8f2b878651e9bcd0a1d0c475fae3))
+
 # 1.0.0 (2021-05-12)
 
 
