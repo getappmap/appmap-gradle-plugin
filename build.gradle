@@ -4,6 +4,7 @@ plugins {
     id 'java-gradle-plugin'
     id 'idea'
     id 'io.github.gradle-nexus.publish-plugin' version '1.0.0'
+    id 'com.gradle.plugin-publish' version '0.14.0'
     id 'signing'
 }
 
@@ -19,6 +20,8 @@ def paramSignKey        = findProperty('signingKey')
 def paramSignPassword   = findProperty("signingPassword")
 def paramRepoUsername   = findProperty('ossrhUsername')
 def paramRepoPassword   = findProperty('ossrhPassword')
+def paramGradleKey      = findProperty('gradlePublishKey')
+def paramGradleSecret   = findProperty('gradlePublishSecret')
 def paramDescription    = findProperty('artifactDescription')   ?: defDescription
 def paramName           = findProperty('artifactName')          ?: defName
 def paramGroupId        = findProperty('publicationGroupId')    ?: defGroupId
@@ -53,10 +56,34 @@ dependencies {
     implementation 'org.assertj:assertj-core:3.15.0'
 }
 
+project.ext.set('gradle.publish.key', paramGradleKey)
+project.ext.set('gradle.publish.secret', paramGradleSecret)
+
+pluginBundle {
+    website = 'https://appland.com'
+    vcsUrl = "https://github.com/${paramGitSlug}"
+    tags = [
+        'architecture',
+        'code analysis',
+        'diagram',
+        'diff',
+        'security',
+        'software',
+        'design',
+        'technical',
+        'debt',
+        'trace',
+        'uml',
+        'visualization'
+    ]
+}
+
 gradlePlugin {
     plugins {
         appmapPlugin {
             id = 'com.appland.appmap'
+            displayName = 'AppMap plugin'
+            description = 'Interactive maps and architecture analysis to help you write better Java.'
             implementationClass = 'com.appland.appmap.AppmapPlugin'
         }
     }
@@ -71,13 +98,7 @@ java {
 apply plugin: 'maven-publish'
 publishing {
     publications {
-        appMapPlugin(MavenPublication) {
-            groupId     paramGroupId
-            artifactId  paramArtifactId
-            version     paramVersion
-
-            from components.java
-
+        withType(MavenPublication) {
             pom {
                 name        = paramName
                 description = paramDescription
@@ -87,7 +108,7 @@ publishing {
                 licenses {
                     license {
                         name = "MIT"
-                        url  = "https://raw.githubusercontent.com/$paramGitSlug/master/LICENSE.txt"
+                        url  = "https://raw.githubusercontent.com/$paramGitSlug/master/LICENSE"
                     }
                 }
                 developers {
@@ -120,7 +141,6 @@ nexusPublishing {
     }
 }
 
-
 if (project.hasProperty("signingKey")) {
     apply plugin: 'signing'
 
@@ -128,6 +148,6 @@ if (project.hasProperty("signingKey")) {
         def signingKey = paramSignKey
         def signingPassword = paramSignPassword
         useInMemoryPgpKeys(signingKey, signingPassword)
-        sign publishing.publications.appMapPlugin
+        sign publishing.publications
     }
 }
