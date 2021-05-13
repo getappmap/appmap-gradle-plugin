@@ -36,35 +36,41 @@ packages:
   # - exclude: com.myorganization.myapplication.MyClass.myStaticMethod
 ```
 
-Next, add the following plugin definition and configuration to your `build.gradle`:
+Next, add the following plugin definition and configuration to your
+`build.gradle`:
 
 1. Add `com.appland.appmap` to plugins
-    ```groovy
-     plugins {
-      // other plugins here
 
-      id 'com.appland.appmap' version '1.0.1'
-     }
-    ```
-2. Make sure the Maven repository is listed in repositories. Example:
-    ``` groovy
-     repositories {
-          mavenCentral()
-     }
-    ```
-3. Add appmap configuration
-    ```groovy
-    // Set up AppMap agent, default parameters
-    appmap {
-        configFile = file("$projectDir/appmap.yml")
-        outputDirectory = file("$buildDir/appmap")
-        skip = false
-        debug = "info"
-        debugFile = file("$buildDir/appmap/agent.log")
-        eventValueSize = 1024
+   ```groovy
+    plugins {
+     // other plugins here
+
+     id 'com.appland.appmap' version '1.0.1'
     }
-    ```
-    
+   ```
+
+2. Make sure the Maven repository is listed in repositories. Example:
+
+   ```groovy
+    repositories {
+         mavenCentral()
+    }
+   ```
+
+3. Add appmap configuration (_optional_)
+
+   ```groovy
+   // Set up AppMap agent, default parameters
+   appmap {
+       configFile = file("$projectDir/appmap.yml")
+       outputDirectory = file("$buildDir/appmap")
+       skip = false
+       debug = "info"
+       debugFile = file("$buildDir/appmap/agent.log")
+       eventValueSize = 1024
+   }
+   ```
+
 That's all! The AppMap agent will automatically record your tests when you run
 `gradle appmap test`. By default, AppMap files are output to `$buildDir/appmap`.
 
