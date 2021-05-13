@@ -74,9 +74,8 @@ Next, add the following plugin definition and configuration to your
 That's all! The AppMap agent will automatically record your tests when you run
 `gradle appmap test`. By default, AppMap files are output to `$buildDir/appmap`.
 
-Using Visual Studio Code?
-[Download the AppMap extension](https://marketplace.visualstudio.com/items?itemName=appland.appmap)
-to view AppMap files in your IDE.
+Using IntelliJ IDEA or Visual Studio Code?
+[Open the Quickstart guide](https://appland.com/docs/quickstart) and install the AppMap extension to view AppMap files in your IDE.
 
 ## About
 
