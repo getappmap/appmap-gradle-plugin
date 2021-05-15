@@ -97,6 +97,18 @@ public class AppmapPluginExtension {
     return configFile;
   }
 
+  public void setConfigFile(RegularFileProperty configFile) {
+    this.configFile = configFile;
+  }
+
+  public void setOutputDirectory(DirectoryProperty outputDirectory) {
+    this.outputDirectory = outputDirectory;
+  }
+
+  public boolean isSkip() {
+    return skip;
+  }
+
   public boolean isConfigFileValid() {
     return configFile.get().getAsFile().exists() && Files
         .isReadable(configFile.get().getAsFile().toPath());
