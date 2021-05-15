@@ -105,10 +105,6 @@ public class AppmapPluginExtension {
     this.outputDirectory = outputDirectory;
   }
 
-  public boolean isSkip() {
-    return skip;
-  }
-
   public boolean isConfigFileValid() {
     return configFile.get().getAsFile().exists() && Files
         .isReadable(configFile.get().getAsFile().toPath());
