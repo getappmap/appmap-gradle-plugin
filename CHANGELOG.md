@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/applandinc/appmap-gradle-plugin/compare/v1.0.1...v1.0.2) (2021-05-20)
+
+
+### Bug Fixes
+
+* to be able to config gradle plugin from a kotlin .kts script ([#10](https://github.com/applandinc/appmap-gradle-plugin/issues/10)) ([eb2f555](https://github.com/applandinc/appmap-gradle-plugin/commit/eb2f555bff214f0a39686408a9210bf94b026589))
+
 ## [1.0.1](https://github.com/applandinc/appmap-gradle-plugin/compare/v1.0.0...v1.0.1) (2021-05-12)
 
 
