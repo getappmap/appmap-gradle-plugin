@@ -1,40 +1,50 @@
 plugins {
+<<<<<<< HEAD
+  id 'groovy'
+  id 'java'
+  id 'java-gradle-plugin'
+  id 'idea'
+  id 'io.github.gradle-nexus.publish-plugin' version '1.0.0'
+  id 'com.gradle.plugin-publish' version '0.14.0'
+  id 'signing'
+=======
     id 'groovy'
     id 'java'
     id 'java-gradle-plugin'
     id 'idea'
+    id 'maven-publish'
     id 'io.github.gradle-nexus.publish-plugin' version '1.0.0'
     id 'com.gradle.plugin-publish' version '0.14.0'
     id 'signing'
+>>>>>>> 732bba1... fixup! refactor: Format the build.gradle
 }
 
-def defGroupId       = 'com.appland'
-def defArtifactId    = 'appmap-gradle-plugin'
-def defName          = 'AppMap Gradle Plugin'
-def defVersion       = "1.0.2"
-def defDescription   = 'Gradle plugin to record AppMaps'
-def defGitSlug       =  "applandinc/appmap-gradle-plugin"
-def defMavenRepo     = 'https://s01.oss.sonatype.org'
+def defGroupId = 'com.appland'
+def defArtifactId = 'appmap-gradle-plugin'
+def defName = 'AppMap Gradle Plugin'
+def defVersion = "1.0.2"
+def defDescription = 'Gradle plugin to record AppMaps'
+def defGitSlug = "applandinc/appmap-gradle-plugin"
+def defMavenRepo = 'https://s01.oss.sonatype.org'
 
-def paramSignKey        = findProperty('signingKey')
-def paramSignPassword   = findProperty("signingPassword")
-def paramRepoUsername   = findProperty('ossrhUsername')
-def paramRepoPassword   = findProperty('ossrhPassword')
-def paramGradleKey      = findProperty('gradlePublishKey')
-def paramGradleSecret   = findProperty('gradlePublishSecret')
-def paramDescription    = findProperty('artifactDescription')   ?: defDescription
-def paramName           = findProperty('artifactName')          ?: defName
-def paramGroupId        = findProperty('publicationGroupId')    ?: defGroupId
-def paramArtifactId     = findProperty('publicationArtifactId') ?: defArtifactId
-def paramGitSlug        = System.getenv("TRAVIS_REPO_SLUG")     ?: defGitSlug
-def paramMavenRepo      = findProperty('mavenRepo')             ?: defMavenRepo
+def paramSignKey = findProperty('signingKey')
+def paramSignPassword = findProperty("signingPassword")
+def paramRepoUsername = findProperty('ossrhUsername')
+def paramRepoPassword = findProperty('ossrhPassword')
+def paramGradleKey = findProperty('gradlePublishKey')
+def paramGradleSecret = findProperty('gradlePublishSecret')
+def paramDescription = findProperty('artifactDescription') ?: defDescription
+def paramName = findProperty('artifactName') ?: defName
+def paramGroupId = findProperty('publicationGroupId') ?: defGroupId
+def paramGitSlug = System.getenv("TRAVIS_REPO_SLUG") ?: defGitSlug
+def paramMavenRepo = findProperty('mavenRepo') ?: defMavenRepo
 
-def paramVersion        = findProperty('paramVersion')
-def travisVersion       = System.getenv("TRAVIS_BRANCH")
-def versionLikeRegexp   = /^\d+\.\d+.*/
-def travisVersionOK     = travisVersion && (travisVersion ==~ versionLikeRegexp)
+def paramVersion = findProperty('paramVersion')
+def travisVersion = System.getenv("TRAVIS_BRANCH")
+def versionLikeRegexp = /^\d+\.\d+.*/
+def travisVersionOK = travisVersion && (travisVersion ==~ versionLikeRegexp)
 
-paramVersion = paramVersion ?: ( travisVersionOK ? travisVersion : defVersion )
+paramVersion = paramVersion ?: (travisVersionOK ? travisVersion : defVersion)
 version = paramVersion
 group = paramGroupId
 
@@ -52,7 +62,7 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
     implementation 'commons-lang:commons-lang:2.6'
-    implementation  'com.google.guava:guava:30.1.1-jre'
+    implementation 'com.google.guava:guava:30.1.1-jre'
     implementation 'org.assertj:assertj-core:3.15.0'
 }
 
@@ -84,7 +94,7 @@ gradlePlugin {
             id = 'com.appland.appmap'
             displayName = 'AppMap plugin'
             description = 'Interactive maps and architecture analysis to help you write better Java.'
-            implementationClass = 'com.appland.appmap.AppmapPlugin'
+            implementationClass = 'com.appland.appmap.gradle.AppMapPlugin'
         }
     }
 }
@@ -100,24 +110,23 @@ publishing {
     publications {
         withType(MavenPublication) {
             pom {
-                name        = paramName
+                name = paramName
                 description = paramDescription
-                version     = paramVersion
-                url         = "https://appland.com"
+                version = paramVersion
+                url = "https://appland.com"
 
                 licenses {
                     license {
                         name = "MIT"
-                        url  = "https://raw.githubusercontent.com/$paramGitSlug/master/LICENSE"
+                        url = "https://raw.githubusercontent.com/$paramGitSlug/master/LICENSE"
                     }
                 }
                 developers {
                     developer {
-                        // id = "kgilpin"
                         name = "Kevin Gilpin"
                         email = "kevin@appland.com"
                         organization = "AppLand Inc."
-                        url="https://dev.to/kgilpin"
+                        url = "https://dev.to/kgilpin"
                     }
                 }
                 scm {
@@ -133,10 +142,10 @@ publishing {
 nexusPublishing {
     repositories {
         sonatype {
-            nexusUrl              = uri(paramMavenRepo + "/service/local/")
-            snapshotRepositoryUrl = uri(paramMavenRepo + "/content/repositories/snapshots" )
-            username              = paramRepoUsername
-            password              = paramRepoPassword
+            nexusUrl = uri(paramMavenRepo + "/service/local/")
+            snapshotRepositoryUrl = uri(paramMavenRepo + "/content/repositories/snapshots")
+            username = paramRepoUsername
+            password = paramRepoPassword
         }
     }
 }
