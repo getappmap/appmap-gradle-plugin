@@ -16,16 +16,16 @@ import org.gradle.process.CommandLineArgumentProvider;
 import org.gradle.util.RelativePathUtil;
 
 /**
- * This class is the actual responsible of building the JVM args to run the Appmap Agent.
+ * This class is the actual responsible of building the JVM args to run the AppMap Agent.
  */
 public class AgentCommandLineLoader implements CommandLineArgumentProvider, Named {
 
   private static final Logger LOGGER = Logging.getLogger(CommandLineArgumentProvider.class);
   private static final List<String> DEBUG_FLAGS = Arrays.asList("hooks", "locals", "http");
 
-  private final AppmapPluginExtension appmap;
+  private final AppMapPluginExtension appmap;
 
-  public AgentCommandLineLoader(AppmapPluginExtension appmap) {
+  public AgentCommandLineLoader(AppMapPluginExtension appmap) {
     this.appmap = appmap;
   }
 
@@ -55,7 +55,7 @@ public class AgentCommandLineLoader implements CommandLineArgumentProvider, Name
           + appmap.getConfigFile().get().getAsFile().getPath());
     }
     if (appmap.shouldSkip()) {
-      LOGGER.warn("Appmap task was executed but but is disable, skip property set to " + appmap
+      LOGGER.warn("AppMap task was executed but but is disable, skip property set to " + appmap
           .shouldSkip());
       return new ArrayList<>();
     } else {

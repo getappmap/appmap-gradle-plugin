@@ -15,7 +15,7 @@ import static org.gradle.testkit.runner.TaskOutcome.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AppmapPluginFunctionalTest {
+public class AppMapPluginFunctionalTest {
 
     @TempDir File testProjectDir;
     private File settingsFile;
@@ -61,7 +61,7 @@ public class AppmapPluginFunctionalTest {
     }
 
     @Test
-    public void testAppmapGoalSucceed() throws IOException {
+    public void testAppMapGoalSucceed() throws IOException {
         writeFile(settingsFile, SETTINGS_GRADLE_CONTENT);
         writeFile(buildFile, BUILD_FILE_CONTENT);
         writeFile(appmapConfigFile, APPMAP_CONFIGFILE_CONTENT);

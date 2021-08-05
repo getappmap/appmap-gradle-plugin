@@ -15,7 +15,7 @@ import org.gradle.process.JavaForkOptions;
 /**
  * This class holds the configuration parameters read from the target project gradle.build
  */
-public class AppmapPluginExtension {
+public class AppMapPluginExtension {
 
   public static final String DEFAULT_OUTPUT_DIRECTORY = "build/appmap";
   protected final Project project;
@@ -32,12 +32,12 @@ public class AppmapPluginExtension {
 
   /**
    * Constructor method, receives the project, configuration and fork options, read and provide the
-   * rest of the configuration to the AppmapPlugin class.
+   * rest of the configuration to the AppMapPlugin class.
    *
    * @param project Actual project object representation.
    * @param agentConf Holdder of the project configuration.
    */
-  public AppmapPluginExtension(Project project, Configuration agentConf) {
+  public AppMapPluginExtension(Project project, Configuration agentConf) {
     this.project = project;
     this.agentConf = agentConf;
     this.configFile = project.getObjects().fileProperty().fileValue(new File("appmap.yml"));
@@ -45,7 +45,7 @@ public class AppmapPluginExtension {
         .fileValue(new File(DEFAULT_OUTPUT_DIRECTORY));
     this.debugFile = project.getObjects().fileProperty()
         .fileValue(new File("build/appmap/agent.log"));
-    logger.info("Appmap Plugin Initialized.");
+    logger.info("AppMap Plugin Initialized.");
   }
 
   public Configuration getAgentConf() {

@@ -27,7 +27,7 @@ public class CleanOutputDirectoryAction implements Action<Task> {
       throw new GradleException(" destination file must not be null if output type is FILE");
     }
     if (fs.delete(spec -> spec.delete(outputDirectoryFile)).getDidWork()) {
-      task.getLogger().info("Appmap output directory cleared");
+      task.getLogger().info("AppMap output directory cleared");
     } else {
       task.getLogger().info("Output directory already cleared or is read only.");
     }
