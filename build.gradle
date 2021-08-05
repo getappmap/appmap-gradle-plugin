@@ -1,13 +1,4 @@
 plugins {
-<<<<<<< HEAD
-  id 'groovy'
-  id 'java'
-  id 'java-gradle-plugin'
-  id 'idea'
-  id 'io.github.gradle-nexus.publish-plugin' version '1.0.0'
-  id 'com.gradle.plugin-publish' version '0.14.0'
-  id 'signing'
-=======
     id 'groovy'
     id 'java'
     id 'java-gradle-plugin'
@@ -16,7 +7,6 @@ plugins {
     id 'io.github.gradle-nexus.publish-plugin' version '1.0.0'
     id 'com.gradle.plugin-publish' version '0.14.0'
     id 'signing'
->>>>>>> 732bba1... fixup! refactor: Format the build.gradle
 }
 
 def defGroupId = 'com.appland'
@@ -61,6 +51,7 @@ dependencies {
     localGroovy()
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
+    implementation 'com.appland:appmap-agent:[1.3, 2.0)'
     implementation 'commons-lang:commons-lang:2.6'
     implementation 'com.google.guava:guava:30.1.1-jre'
     implementation 'org.assertj:assertj-core:3.15.0'
