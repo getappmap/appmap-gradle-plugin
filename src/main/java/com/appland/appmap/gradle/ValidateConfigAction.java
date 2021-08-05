@@ -1,7 +1,7 @@
-package com.appland.appmap;
+package com.appland.appmap.gradle;
 
 import java.io.File;
-import java.nio.file.Files;
+
 import org.gradle.api.Action;
 import org.gradle.api.GradleException;
 import org.gradle.api.Task;

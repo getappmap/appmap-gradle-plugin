@@ -1,4 +1,4 @@
-package com.appland.appmap;
+package com.appland.appmap.gradle;
 
 import static java.lang.String.format;
 

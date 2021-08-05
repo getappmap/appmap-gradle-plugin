@@ -1,4 +1,4 @@
-package com.appland.appmap;
+package com.appland.appmap.gradle;
 
 import org.gradle.api.Action;
 import org.gradle.api.Project;

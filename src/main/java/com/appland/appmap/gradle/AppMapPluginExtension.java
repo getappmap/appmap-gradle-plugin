@@ -1,16 +1,14 @@
-package com.appland.appmap;
+package com.appland.appmap.gradle;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.gradle.api.GradleException;
+
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.tasks.Input;
-import org.gradle.process.JavaForkOptions;
 
 /**
  * This class holds the configuration parameters read from the target project gradle.build
