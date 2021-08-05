@@ -19,15 +19,15 @@ public class AppMapPluginExtension {
 
   public static final String DEFAULT_OUTPUT_DIRECTORY = "build/appmap";
   protected final Project project;
-  private final Logger logger = Logger.getLogger("com.appland.appmap");
+  private final Logger logger = Logger.getLogger("com.appland.appmap.gradle");
   private final Configuration agentConf;
   private RegularFileProperty configFile;
   private DirectoryProperty outputDirectory;
   private boolean skip = false;
-  //Enable debug flags as a comma separated list. Accepts: info, hooks, http, locals Default: info
+  // Enable debug flags as a comma separated list. Accepts: info, hooks, http, locals Default: info
   private String debug = "info";
   private RegularFileProperty debugFile;
-  //Specifies the length of a value string before truncation. If 0, truncation is disabled.
+  // Specifies the length of a value string before truncation. If 0, truncation is disabled.
   private int eventValueSize = 1024;
 
   /**
@@ -35,7 +35,7 @@ public class AppMapPluginExtension {
    * rest of the configuration to the AppMapPlugin class.
    *
    * @param project Actual project object representation.
-   * @param agentConf Holdder of the project configuration.
+   * @param agentConf Holder of the project configuration.
    */
   public AppMapPluginExtension(Project project, Configuration agentConf) {
     this.project = project;
@@ -110,7 +110,10 @@ public class AppMapPluginExtension {
   }
 
   public boolean isConfigFileValid() {
-    return configFile.get().getAsFile().exists() && Files
-        .isReadable(configFile.get().getAsFile().toPath());
+    return AppMapPluginExtension.isConfigFileValid(configFile.get().getAsFile());
+  }
+
+  public static boolean isConfigFileValid(File configFile) {
+    return configFile.exists() && Files.isReadable(configFile.toPath());
   }
 }

@@ -36,5 +36,4 @@ public class LoadAppMapAgentAction implements Action<Task> {
     LOGGER.lifecycle("Attaching AppMap Agent to task: " + taskName);
     task.getJvmArgumentProviders().add(new AgentCommandLineLoader(extension));
   }
-
 }

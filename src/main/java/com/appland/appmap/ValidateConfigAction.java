@@ -28,6 +28,6 @@ public class ValidateConfigAction implements Action<Task> {
   }
 
   protected boolean isConfigFileValid() {
-    return configFile.get().exists() && Files.isReadable(configFile.get().toPath());
+    return AppMapPluginExtension.isConfigFileValid(configFile.get());
   }
 }
