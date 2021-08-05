@@ -80,5 +80,18 @@ public class AppMapPlugin implements Plugin<Project> {
           );
         }
     );
+
+      project.getTasks().register(
+          "appmap-print-jar-path",
+          agentJarPathTask -> {
+              agentJarPathTask.doFirst(
+                  new PrintJarPathAction(extension)
+              );
+              agentJarPathTask.setGroup(LifecycleBasePlugin.BUILD_GROUP);
+              agentJarPathTask.setDescription(
+                  String.format("Prints the file path of the AppMap Agent JAR")
+              );
+          }
+      );
   }
 }
