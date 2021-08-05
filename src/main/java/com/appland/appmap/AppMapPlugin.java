@@ -3,8 +3,6 @@ package com.appland.appmap;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
-import org.gradle.api.file.FileSystemOperations;
-import org.gradle.api.internal.project.ProjectInternal;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.ReportingBasePlugin;
 import org.gradle.language.base.plugins.LifecycleBasePlugin;
@@ -13,8 +11,7 @@ import org.gradle.language.base.plugins.LifecycleBasePlugin;
  * The actual plugin definition for appmap plugin.
  */
 public class AppMapPlugin implements Plugin<Project> {
-
-  public static final String DEFAULT_AGENT_VERSION = "latest.release";
+  public static final String DEFAULT_AGENT_VERSION = "[1.3, 2.0)";
   public static final String AGENT_CONFIGURATION_NAME = "appmapAgent";
   public static final String PLUGIN_EXTENSION_NAME = "appmap";
   private Project project;
@@ -47,9 +44,7 @@ public class AppMapPlugin implements Plugin<Project> {
   }
 
   private void addAppMapGradleTasks(AppMapPluginExtension extension) {
-    project.getPlugins().withType(JavaPlugin.class, javaPlugin -> {
-      addAppMapTasks(extension);
-    });
+    project.getPlugins().withType(JavaPlugin.class, javaPlugin -> addAppMapTasks(extension));
   }
 
   /**
@@ -66,15 +61,10 @@ public class AppMapPlugin implements Plugin<Project> {
           prepareAgentTask.doFirst(
               new ValidateConfigAction(extension.getConfigFile().getAsFile())
           );
-          prepareAgentTask.doLast(
-              new CleanOutputDirectoryAction(
-                  ((ProjectInternal) project).getServices().get(FileSystemOperations.class),
-                  extension.getOutputDirectory().getAsFile())
-          );
           prepareAgentTask.doLast(new LoadAppMapAgentAction(project, extension));
           prepareAgentTask.setGroup(LifecycleBasePlugin.BUILD_GROUP);
           prepareAgentTask.setDescription(
-              String.format("Attaches AppMap Agent to the Test task")
+              String.format("Injects AppMap Agent JVM settings to the 'test' task")
           );
         });
 
@@ -86,7 +76,7 @@ public class AppMapPlugin implements Plugin<Project> {
           );
           validateConfigTask.setGroup(LifecycleBasePlugin.BUILD_GROUP);
           validateConfigTask.setDescription(
-              String.format("Searches AppMap Agent config file and validates it")
+              String.format("Validates the AppMap Agent configuration")
           );
         }
     );
