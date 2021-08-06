@@ -69,7 +69,7 @@ public class AppMapPlugin implements Plugin<Project> {
         });
 
     project.getTasks().register(
-        "validate-config",
+        "appmap-validate-config",
         validateConfigTask -> {
           validateConfigTask.doFirst(
               new ValidateConfigAction(extension.getConfigFile().getAsFile())
