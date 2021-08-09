@@ -1,43 +1,41 @@
-package com.appland.appmap;
+package com.appland.appmap.gradle;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.gradle.api.GradleException;
+
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.tasks.Input;
-import org.gradle.process.JavaForkOptions;
 
 /**
  * This class holds the configuration parameters read from the target project gradle.build
  */
-public class AppmapPluginExtension {
+public class AppMapPluginExtension {
 
   public static final String DEFAULT_OUTPUT_DIRECTORY = "build/appmap";
   protected final Project project;
-  private final Logger logger = Logger.getLogger("com.appland.appmap");
+  private final Logger logger = Logger.getLogger("com.appland.appmap.gradle");
   private final Configuration agentConf;
   private RegularFileProperty configFile;
   private DirectoryProperty outputDirectory;
   private boolean skip = false;
-  //Enable debug flags as a comma separated list. Accepts: info, hooks, http, locals Default: info
+  // Enable debug flags as a comma separated list. Accepts: info, hooks, http, locals Default: info
   private String debug = "info";
   private RegularFileProperty debugFile;
-  //Specifies the length of a value string before truncation. If 0, truncation is disabled.
+  // Specifies the length of a value string before truncation. If 0, truncation is disabled.
   private int eventValueSize = 1024;
 
   /**
    * Constructor method, receives the project, configuration and fork options, read and provide the
-   * rest of the configuration to the AppmapPlugin class.
+   * rest of the configuration to the AppMapPlugin class.
    *
    * @param project Actual project object representation.
-   * @param agentConf Holdder of the project configuration.
+   * @param agentConf Holder of the project configuration.
    */
-  public AppmapPluginExtension(Project project, Configuration agentConf) {
+  public AppMapPluginExtension(Project project, Configuration agentConf) {
     this.project = project;
     this.agentConf = agentConf;
     this.configFile = project.getObjects().fileProperty().fileValue(new File("appmap.yml"));
@@ -45,7 +43,7 @@ public class AppmapPluginExtension {
         .fileValue(new File(DEFAULT_OUTPUT_DIRECTORY));
     this.debugFile = project.getObjects().fileProperty()
         .fileValue(new File("build/appmap/agent.log"));
-    logger.info("Appmap Plugin Initialized.");
+    logger.info("AppMap Plugin Initialized.");
   }
 
   public Configuration getAgentConf() {
@@ -110,7 +108,10 @@ public class AppmapPluginExtension {
   }
 
   public boolean isConfigFileValid() {
-    return configFile.get().getAsFile().exists() && Files
-        .isReadable(configFile.get().getAsFile().toPath());
+    return AppMapPluginExtension.isConfigFileValid(configFile.get().getAsFile());
+  }
+
+  public static boolean isConfigFileValid(File configFile) {
+    return configFile.exists() && Files.isReadable(configFile.toPath());
   }
 }

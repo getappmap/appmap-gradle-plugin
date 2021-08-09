@@ -1,4 +1,4 @@
-package com.appland.appmap;
+package com.appland.appmap.gradle;
 
 import static java.lang.String.format;
 
@@ -16,16 +16,18 @@ import org.gradle.process.CommandLineArgumentProvider;
 import org.gradle.util.RelativePathUtil;
 
 /**
- * This class is the actual responsible of building the JVM args to run the Appmap Agent.
+ * This class is the actual responsible of building the JVM args to run the AppMap Agent.
  */
 public class AgentCommandLineLoader implements CommandLineArgumentProvider, Named {
 
+  static final String DEFAULT_CONFIG_FILE = "appmap.yml";
+
   private static final Logger LOGGER = Logging.getLogger(CommandLineArgumentProvider.class);
-  private static final List<String> DEBUG_FLAGS = Arrays.asList("hooks", "locals", "http");
+  private static final List<String> DEBUG_FLAGS = Arrays.asList("debug", "hooks", "locals", "http");
 
-  private final AppmapPluginExtension appmap;
+  private final AppMapPluginExtension appmap;
 
-  public AgentCommandLineLoader(AppmapPluginExtension appmap) {
+  public AgentCommandLineLoader(AppMapPluginExtension appmap) {
     this.appmap = appmap;
   }
 
@@ -55,7 +57,7 @@ public class AgentCommandLineLoader implements CommandLineArgumentProvider, Name
           + appmap.getConfigFile().get().getAsFile().getPath());
     }
     if (appmap.shouldSkip()) {
-      LOGGER.warn("Appmap task was executed but but is disable, skip property set to " + appmap
+      LOGGER.warn("AppMap task was executed but but is disabled, 'skip' property set to " + appmap
           .shouldSkip());
       return new ArrayList<>();
     } else {
@@ -66,8 +68,11 @@ public class AgentCommandLineLoader implements CommandLineArgumentProvider, Name
 
       List<String> argumentLn = new ArrayList<>();
       argumentLn.add(javaAgentArg);
-      argumentLn.add("-Dappmap.config.file=" + appmap.getConfigFile().get().toString());
-      argumentLn.add("-Dappmap.output.directory=" + appmap.getOutputDirectory().get().toString());
+
+      if ( appmap.getConfigFile().isPresent() ) {
+        argumentLn.add("-Dappmap.config.file=" + appmap.getConfigFile().get());
+      }
+      argumentLn.add("-Dappmap.output.directory=" + appmap.getOutputDirectory().get());
       argumentLn.add("-Dappmap.event.valueSize=" + appmap.getEventValueSize());
       argumentLn.addAll(buildDebugParams());
       LOGGER.lifecycle("Arguments line set to " + Joiner.on(",").join(argumentLn));
@@ -80,14 +85,23 @@ public class AgentCommandLineLoader implements CommandLineArgumentProvider, Name
     if (appmap.getDebug() != null && !appmap.getDebug().isEmpty()) {
       final List<String> debugTokens = new ArrayList<>(
           Arrays.asList(appmap.getDebug().split("[,|\\s]")));
+
+      boolean hasDebug = false;
       for (String token : debugTokens) {
         if (DEBUG_FLAGS.contains(token)) {
-          debugArgs.add("-Dappmap.debug." + token);
+          hasDebug = true;
+          if (token.equals("debug")) {
+            debugArgs.add("-Dappmap.debug");
+          } else {
+            debugArgs.add("-Dappmap.debug." + token);
+          }
         }
       }
-      debugArgs.add(0, "-Dappmap.debug");
-      debugArgs.add(0, "-Dappmap.debug.file=" + StringEscapeUtils
-          .escapeJava(format("%s", appmap.getDebugFile())));
+
+      if (hasDebug) {
+        debugArgs.add(0, "-Dappmap.debug.file=" + StringEscapeUtils
+            .escapeJava(format("%s", appmap.getDebugFile())));
+      }
     }
     return debugArgs;
   }

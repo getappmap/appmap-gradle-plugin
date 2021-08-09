@@ -1,11 +1,11 @@
-package com.appland.appmap;
+package com.appland.appmap.gradle;
 
 import org.gradle.api.Project;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.jupiter.api.Test;
 
 
-public class AppmapPluginTest {
+public class AppMapPluginTest {
   @Test
   public void test() {
     // Given

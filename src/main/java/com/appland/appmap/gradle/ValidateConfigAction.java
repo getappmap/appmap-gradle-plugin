@@ -1,7 +1,7 @@
-package com.appland.appmap;
+package com.appland.appmap.gradle;
 
 import java.io.File;
-import java.nio.file.Files;
+
 import org.gradle.api.Action;
 import org.gradle.api.GradleException;
 import org.gradle.api.Task;
@@ -28,6 +28,6 @@ public class ValidateConfigAction implements Action<Task> {
   }
 
   protected boolean isConfigFileValid() {
-    return configFile.get().exists() && Files.isReadable(configFile.get().toPath());
+    return AppMapPluginExtension.isConfigFileValid(configFile.get());
   }
 }
