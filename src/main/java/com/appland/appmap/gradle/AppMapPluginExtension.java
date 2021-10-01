@@ -15,7 +15,7 @@ import org.gradle.api.tasks.Input;
  */
 public class AppMapPluginExtension {
 
-  public static final String DEFAULT_OUTPUT_DIRECTORY = "build/appmap";
+  public static final String DEFAULT_OUTPUT_DIRECTORY = "appmap";
   protected final Project project;
   private final Logger logger = Logger.getLogger("com.appland.appmap.gradle");
   private final Configuration agentConf;
@@ -38,11 +38,12 @@ public class AppMapPluginExtension {
   public AppMapPluginExtension(Project project, Configuration agentConf) {
     this.project = project;
     this.agentConf = agentConf;
-    this.configFile = project.getObjects().fileProperty().fileValue(new File("appmap.yml"));
+    this.configFile = project.getObjects().fileProperty()
+        .value(project.getLayout().getProjectDirectory().file("appmap.yml"));
     this.outputDirectory = project.getObjects().directoryProperty()
-        .fileValue(new File(DEFAULT_OUTPUT_DIRECTORY));
+        .value(project.getLayout().getBuildDirectory().dir(DEFAULT_OUTPUT_DIRECTORY).get());
     this.debugFile = project.getObjects().fileProperty()
-        .fileValue(new File("build/appmap/agent.log"));
+        .value(project.getLayout().getBuildDirectory().file("appmap/agent.log").get());
     logger.info("AppMap Plugin Initialized.");
   }
 
@@ -71,6 +72,10 @@ public class AppMapPluginExtension {
     return debugFile;
   }
 
+  public String getDebugFilePath() {
+    return debugFile.getAsFile().get().getAbsolutePath();
+  }
+
   public void setDebugFile(RegularFileProperty debugFile) {
     this.debugFile = debugFile;
   }
@@ -87,12 +92,16 @@ public class AppMapPluginExtension {
     return outputDirectory;
   }
 
-  public String getOutputDirectoryAsString() {
-    return outputDirectory.toString();
+  public String getOutputDirectoryPath() {
+    return outputDirectory.getAsFile().get().getAbsolutePath();
   }
 
   public RegularFileProperty getConfigFile() {
     return configFile;
+  }
+
+  public String getConfigFilePath() {
+    return configFile.getAsFile().get().getAbsolutePath();
   }
 
   public void setConfigFile(RegularFileProperty configFile) {

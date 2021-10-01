@@ -54,7 +54,7 @@ public class AgentCommandLineLoader implements CommandLineArgumentProvider, Name
     if (!appmap.isConfigFileValid()) {
       appmap.setSkip(true);
       throw new GradleException("Configuration file must exist and be readable: "
-          + appmap.getConfigFile().get().getAsFile().getPath());
+          + appmap.getConfigFilePath());
     }
     if (appmap.shouldSkip()) {
       LOGGER.warn("AppMap task was executed but but is disabled, 'skip' property set to " + appmap
@@ -70,9 +70,9 @@ public class AgentCommandLineLoader implements CommandLineArgumentProvider, Name
       argumentLn.add(javaAgentArg);
 
       if ( appmap.getConfigFile().isPresent() ) {
-        argumentLn.add("-Dappmap.config.file=" + appmap.getConfigFile().get());
+        argumentLn.add("-Dappmap.config.file=" + appmap.getConfigFilePath());
       }
-      argumentLn.add("-Dappmap.output.directory=" + appmap.getOutputDirectory().get());
+      argumentLn.add("-Dappmap.output.directory=" + appmap.getOutputDirectoryPath());
       argumentLn.add("-Dappmap.event.valueSize=" + appmap.getEventValueSize());
       argumentLn.addAll(buildDebugParams());
       LOGGER.lifecycle("Arguments line set to " + Joiner.on(",").join(argumentLn));
@@ -100,7 +100,7 @@ public class AgentCommandLineLoader implements CommandLineArgumentProvider, Name
 
       if (hasDebug) {
         debugArgs.add(0, "-Dappmap.debug.file=" + StringEscapeUtils
-            .escapeJava(format("%s", appmap.getDebugFile())));
+            .escapeJava(format("%s", appmap.getDebugFilePath())));
       }
     }
     return debugArgs;
