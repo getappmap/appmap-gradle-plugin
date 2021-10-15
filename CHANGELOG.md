@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/applandinc/appmap-gradle-plugin/compare/v1.1.0...v1.1.1) (2021-10-15)
+
+
+### Bug Fixes
+
+* Add backward compatibility for Gradle 5.0 ([5fad30c](https://github.com/applandinc/appmap-gradle-plugin/commit/5fad30c377583c5d8063511bc76d07df1f6d3137))
+
 # [1.1.0](https://github.com/applandinc/appmap-gradle-plugin/compare/v1.0.2...v1.1.0) (2021-08-09)
 
 
