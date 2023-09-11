@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+set -ex -o pipefail
+
+version=$(./gradlew -q clean check publishToMavenLocal -Psnapshot | awk '/^version:/ {print $2}' FS=:)
+
+cd test/fixture
+appmapDir=app/build/appmap
+rm -rf $appmapDir
+./gradlew -PappmapGradleVersion=$version ${appmapAgentVersion+-PappmapAgentVersion=$appmapAgentVersion} clean appmap test
+
+appmap=$appmapDir/junit/com_example_AppTest_shouldAnswerWithTrue.appmap.json
+test -f $appmap
+events=$(jq '.events | length' $appmap)
+test $events -eq 4

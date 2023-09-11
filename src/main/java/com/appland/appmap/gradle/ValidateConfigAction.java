@@ -1,10 +1,10 @@
 package com.appland.appmap.gradle;
 
-import java.io.File;
-
 import org.gradle.api.Action;
 import org.gradle.api.GradleException;
 import org.gradle.api.Task;
+import org.gradle.api.file.RegularFile;
+import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.Provider;
 
 /**
@@ -12,22 +12,22 @@ import org.gradle.api.provider.Provider;
  */
 public class ValidateConfigAction implements Action<Task> {
 
-  private final Provider<File> configFile;
+  private final Provider<RegularFile> configFile;
 
-  public ValidateConfigAction(Provider<File> configFile) {
-    this.configFile = configFile;
+  public ValidateConfigAction(RegularFileProperty regularFileProperty) {
+    this.configFile = regularFileProperty;
   }
 
   @Override
   public void execute(Task task) {
     if (!isConfigFileValid()) {
       throw new GradleException(
-          "Config file " + configFile.get().getPath() + " not found or not readable."
+          "Config file " + configFile.get().getAsFile().getPath() + " not found or not readable."
       );
     }
   }
 
   protected boolean isConfigFileValid() {
-    return AppMapPluginExtension.isConfigFileValid(configFile.get());
+    return AppMapPluginExtension.isConfigFileValid(configFile.getOrNull());
   }
 }

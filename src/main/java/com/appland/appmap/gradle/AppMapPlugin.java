@@ -26,10 +26,9 @@ public class AppMapPlugin implements Plugin<Project> {
     config.setTransitive(true);
     config.setDescription("AppMap agent to generate app map data.");
     config.defaultDependencies(dependencies ->
-        dependencies.add(
-            project.getDependencies().create("com.appland:appmap-agent:" + DEFAULT_AGENT_VERSION)
-        )
-    );
+    dependencies.add(
+            project.getDependencies().create(
+                    "com.appland:appmap-agent:" + findProperty("appmapAgentVersion", DEFAULT_AGENT_VERSION))));
     AppMapPluginExtension extension = project.getExtensions()
         .create(PLUGIN_EXTENSION_NAME, AppMapPluginExtension.class, project, config);
     //extension.setAgentVersion(DEFAULT_AGENT_VERSION);*/
@@ -54,44 +53,41 @@ public class AppMapPlugin implements Plugin<Project> {
    * @param extension holds the config parameters for the plugin.
    */
   private void addAppMapTasks(AppMapPluginExtension extension) {
-    project.getTasks().register(
-        "appmap",
-        AppMapTask.class,
-        prepareAgentTask -> {
-          prepareAgentTask.doFirst(
-              new ValidateConfigAction(extension.getConfigFile().getAsFile())
-          );
-          prepareAgentTask.doLast(new LoadAppMapAgentAction(project, extension));
-          prepareAgentTask.setGroup(LifecycleBasePlugin.BUILD_GROUP);
-          prepareAgentTask.setDescription(
-              String.format("Injects AppMap Agent JVM settings to the 'test' task")
-          );
-        });
-
-    project.getTasks().register(
-        "appmap-validate-config",
-        validateConfigTask -> {
-          validateConfigTask.doFirst(
-              new ValidateConfigAction(extension.getConfigFile().getAsFile())
-          );
-          validateConfigTask.setGroup(LifecycleBasePlugin.BUILD_GROUP);
-          validateConfigTask.setDescription(
-              String.format("Validates the AppMap Agent configuration")
-          );
-        }
-    );
+      project.getTasks().register(
+              "appmap",
+              AppMapTask.class,
+              prepareAgentTask -> {
+                  prepareAgentTask.doFirst(
+                          new ValidateConfigAction(extension.getConfigFile()));
+                  prepareAgentTask.doLast(new LoadAppMapAgentAction(project, extension));
+                  prepareAgentTask.setGroup(LifecycleBasePlugin.BUILD_GROUP);
+                  prepareAgentTask.setDescription(
+                          String.format("Injects AppMap Agent JVM settings to the 'test' task"));
+              });
 
       project.getTasks().register(
-          "appmap-print-jar-path",
-          agentJarPathTask -> {
-              agentJarPathTask.doFirst(
-                  new PrintJarPathAction(extension)
-              );
-              agentJarPathTask.setGroup(LifecycleBasePlugin.BUILD_GROUP);
-              agentJarPathTask.setDescription(
-                  String.format("Prints the file path of the AppMap Agent JAR")
-              );
-          }
-      );
+              "appmap-validate-config",
+              validateConfigTask -> {
+                  validateConfigTask.doFirst(
+                          new ValidateConfigAction(extension.getConfigFile()));
+                  validateConfigTask.setGroup(LifecycleBasePlugin.BUILD_GROUP);
+                  validateConfigTask.setDescription(
+                          String.format("Validates the AppMap Agent configuration"));
+              });
+
+      project.getTasks().register(
+              "appmap-print-jar-path",
+              agentJarPathTask -> {
+                  agentJarPathTask.doFirst(
+                          new PrintJarPathAction(extension));
+                  agentJarPathTask.setGroup(LifecycleBasePlugin.BUILD_GROUP);
+                  agentJarPathTask.setDescription(
+                          String.format("Prints the file path of the AppMap Agent JAR"));
+              });
+  }
+
+  String findProperty(String name, String defaultValue) {
+      String value = (String) project.findProperty(name);
+      return value != null ? value : defaultValue;
   }
 }
