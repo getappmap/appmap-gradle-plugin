@@ -1,23 +1,27 @@
 package com.appland.appmap.gradle;
 
-import org.gradle.testkit.runner.BuildResult;
-import org.gradle.testkit.runner.GradleRunner;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
+import static org.gradle.testkit.runner.TaskOutcome.FAILED;
+import static org.gradle.testkit.runner.TaskOutcome.NO_SOURCE;
+import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import static org.gradle.testkit.runner.TaskOutcome.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.gradle.testkit.runner.BuildResult;
+import org.gradle.testkit.runner.GradleRunner;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 public class AppMapPluginFunctionalTest {
 
-    @TempDir File testProjectDir;
+    @TempDir
+    File testProjectDir;
     private File settingsFile;
     private File buildFile;
     private File appmapConfigFile;
@@ -30,25 +34,10 @@ public class AppMapPluginFunctionalTest {
     }
 
     @Test
-    public void testValidateConfigGoalFailsOnNonExistentFile() throws IOException {
+    public void testValidateConfigGoalSucceedsOnNonExistentFile() throws IOException {
         writeFile(settingsFile, SETTINGS_GRADLE_CONTENT);
-        writeFile(buildFile, BUILD_FILE_CONTENT);
-
-        BuildResult result = GradleRunner.create()
-                .withProjectDir(testProjectDir)
-                .withArguments("appmap-validate-config")
-                .withPluginClasspath()
-                .buildAndFail();
-
-        assertTrue(result.getOutput().contains("not found or not readable."));
-        assertEquals(FAILED, result.task(":appmap-validate-config").getOutcome());
-    }
-
-    @Test
-    public void testValidateConfigGoalSucceed() throws IOException {
-        writeFile(settingsFile, SETTINGS_GRADLE_CONTENT);
-        writeFile(buildFile, BUILD_FILE_CONTENT);
-        writeFile(appmapConfigFile, APPMAP_CONFIGFILE_CONTENT);
+        String buildFileContent = String.format(BUILD_FILE_CONTENT, "");
+        writeFile(buildFile, buildFileContent);
 
         BuildResult result = GradleRunner.create()
                 .withProjectDir(testProjectDir)
@@ -60,38 +49,71 @@ public class AppMapPluginFunctionalTest {
         assertEquals(SUCCESS, result.task(":appmap-validate-config").getOutcome());
     }
 
-    @Test
-    public void testAppMapGoalSucceed() throws IOException {
-        writeFile(settingsFile, SETTINGS_GRADLE_CONTENT);
-        writeFile(buildFile, BUILD_FILE_CONTENT);
-        writeFile(appmapConfigFile, APPMAP_CONFIGFILE_CONTENT);
+    @Nested
+    class withConfigSpecified {
+        @BeforeEach
+        void writeFiles() throws IOException {
+            writeFile(settingsFile, SETTINGS_GRADLE_CONTENT);
+            writeFile(buildFile, String.format(BUILD_FILE_CONTENT, "configFile = file(\"$projectDir/appmap.yml\")\n"));
+        }
 
-        BuildResult result = GradleRunner.create()
-                .withProjectDir(testProjectDir)
-                .withArguments("appmap")
-                .withPluginClasspath()
-                .build();
+        @Test
+        public void testValidateConfigGoalFailsOnNonExistentFile() throws IOException {
+            BuildResult result = GradleRunner.create()
+                    .withProjectDir(testProjectDir)
+                    .withArguments("appmap-validate-config")
+                    .withPluginClasspath()
+                    .buildAndFail();
 
-        assertTrue(result.getOutput().contains("BUILD SUCCESSFUL"));
-        assertEquals(NO_SOURCE, result.task(":appmap").getOutcome());
-    }
+            assertTrue(result.getOutput().contains("not found or not readable."));
+            assertEquals(FAILED, result.task(":appmap-validate-config").getOutcome());
+        }
 
-    @Test
-    public void testAppMapJarPath() throws IOException {
-        writeFile(settingsFile, SETTINGS_GRADLE_CONTENT);
-        writeFile(buildFile, BUILD_FILE_CONTENT);
-        writeFile(appmapConfigFile, APPMAP_CONFIGFILE_CONTENT);
+        @Nested
+        class withConfigPresent {
+            @BeforeEach
+            void writeConfig() throws IOException {
+                writeFile(appmapConfigFile, APPMAP_CONFIGFILE_CONTENT);
+            }
 
-        BuildResult result = GradleRunner.create()
-            .withProjectDir(testProjectDir)
-            .withArguments("appmap-print-jar-path")
-            .withPluginClasspath()
-            .build();
+            @Test
+            public void testValidateConfigGoalSucceed() throws IOException {
+                BuildResult result = GradleRunner.create()
+                        .withProjectDir(testProjectDir)
+                        .withArguments("appmap-validate-config")
+                        .withPluginClasspath()
+                        .build();
 
-        assertTrue(result.getOutput().contains("BUILD SUCCESSFUL"));
-        assertTrue(result.getOutput().contains("java.home="));
-        assertTrue(result.getOutput().contains("com.appland:appmap-agent.jar.path="));
-        assertEquals(SUCCESS, result.task(":appmap-print-jar-path").getOutcome());
+                assertTrue(result.getOutput().contains("BUILD SUCCESSFUL"));
+                assertEquals(SUCCESS, result.task(":appmap-validate-config").getOutcome());
+            }
+
+            @Test
+            public void testAppMapGoalSucceed() throws IOException {
+                BuildResult result = GradleRunner.create()
+                        .withProjectDir(testProjectDir)
+                        .withArguments("appmap")
+                        .withPluginClasspath()
+                        .build();
+
+                assertTrue(result.getOutput().contains("BUILD SUCCESSFUL"));
+                assertEquals(NO_SOURCE, result.task(":appmap").getOutcome());
+            }
+
+            @Test
+            public void testAppMapJarPath() throws IOException {
+                BuildResult result = GradleRunner.create()
+                        .withProjectDir(testProjectDir)
+                        .withArguments("appmap-print-jar-path")
+                        .withPluginClasspath()
+                        .build();
+
+                assertTrue(result.getOutput().contains("BUILD SUCCESSFUL"));
+                assertTrue(result.getOutput().contains("java.home="));
+                assertTrue(result.getOutput().contains("com.appland:appmap-agent.jar.path="));
+                assertEquals(SUCCESS, result.task(":appmap-print-jar-path").getOutcome());
+            }
+        }
     }
 
     private void writeFile(File destination, String content) throws IOException {
@@ -120,7 +142,7 @@ public class AppMapPluginFunctionalTest {
             "}\n" +
             "\n" +
             "appmap {\n" +
-            "    configFile = file(\"$projectDir/appmap.yml\")\n" +
+            "    %s" +
             "    outputDirectory = file(\"$projectDir/build/appmap\")\n" +
             "    skip = false\n" +
             "    debug = \"info\"\n" +

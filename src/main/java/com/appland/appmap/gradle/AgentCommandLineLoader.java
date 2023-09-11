@@ -2,18 +2,21 @@ package com.appland.appmap.gradle;
 
 import static java.lang.String.format;
 
-import com.google.common.base.Joiner;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import org.apache.commons.lang.StringEscapeUtils;
 import org.gradle.api.GradleException;
 import org.gradle.api.Named;
+import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
 import org.gradle.api.tasks.Internal;
 import org.gradle.process.CommandLineArgumentProvider;
 import org.gradle.util.RelativePathUtil;
+
+import com.google.common.base.Joiner;
 
 /**
  * This class is the actual responsible of building the JVM args to run the AppMap Agent.
@@ -51,6 +54,8 @@ public class AgentCommandLineLoader implements CommandLineArgumentProvider, Name
    */
   @Internal
   public List<String> getAsJvmArg() {
+    RegularFileProperty configFile = appmap.getConfigFile();
+
     if (!appmap.isConfigFileValid()) {
       appmap.setSkip(true);
       throw new GradleException("Configuration file must exist and be readable: "
@@ -69,7 +74,7 @@ public class AgentCommandLineLoader implements CommandLineArgumentProvider, Name
       List<String> argumentLn = new ArrayList<>();
       argumentLn.add(javaAgentArg);
 
-      if ( appmap.getConfigFile().isPresent() ) {
+      if (configFile != null && configFile.isPresent()) {
         argumentLn.add("-Dappmap.config.file=" + appmap.getConfigFilePath());
       }
       argumentLn.add("-Dappmap.output.directory=" + appmap.getOutputDirectoryPath());

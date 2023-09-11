@@ -6,8 +6,12 @@ import java.util.logging.Logger;
 
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.file.Directory;
 import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.file.ProjectLayout;
+import org.gradle.api.file.RegularFile;
 import org.gradle.api.file.RegularFileProperty;
+import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.tasks.Input;
 
 /**
@@ -29,21 +33,24 @@ public class AppMapPluginExtension {
   private int eventValueSize = 1024;
 
   /**
-   * Constructor method, receives the project, configuration and fork options, read and provide the
+   * Constructor method, receives the project, configuration and fork options,
+   * read and provide the
    * rest of the configuration to the AppMapPlugin class.
    *
-   * @param project Actual project object representation.
+   * @param project   Actual project object representation.
    * @param agentConf Holder of the project configuration.
    */
   public AppMapPluginExtension(Project project, Configuration agentConf) {
     this.project = project;
     this.agentConf = agentConf;
-    this.configFile = project.getObjects().fileProperty()
-        .value(project.getLayout().getProjectDirectory().file("appmap.yml"));
     this.outputDirectory = project.getObjects().directoryProperty()
         .value(project.getLayout().getBuildDirectory().dir(DEFAULT_OUTPUT_DIRECTORY).get());
-    this.debugFile = project.getObjects().fileProperty()
-        .value(project.getLayout().getBuildDirectory().file("appmap/agent.log").get());
+    ProjectLayout projectLayout = project.getLayout();
+    Directory projectDirectory = projectLayout.getProjectDirectory();
+    ObjectFactory projectObjects = project.getObjects();
+    this.configFile = projectObjects.fileProperty();
+    this.debugFile = projectObjects.fileProperty()
+        .value(projectLayout.getBuildDirectory().file("appmap/agent.log").get());
     logger.info("AppMap Plugin Initialized.");
   }
 
@@ -117,10 +124,16 @@ public class AppMapPluginExtension {
   }
 
   public boolean isConfigFileValid() {
-    return AppMapPluginExtension.isConfigFileValid(configFile.get().getAsFile());
+    return AppMapPluginExtension.isConfigFileValid(configFile.getOrNull());
   }
 
-  public static boolean isConfigFileValid(File configFile) {
+  public static boolean isConfigFileValid(RegularFile configFileProperty) {
+    if (configFileProperty == null) {
+      // If there's no config file specified, let the agent deal with it.
+      return true;
+    }
+
+    File configFile = configFileProperty.getAsFile();
     return configFile.exists() && Files.isReadable(configFile.toPath());
   }
 }

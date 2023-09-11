@@ -15,7 +15,8 @@ cache:
     - '$HOME/.gradle/wrapper/'
 
 script:
-  - ./gradlew -is check
+- test/bin/smoketest || travis_terminate 1
+- ./gradlew -is check
 
 before_deploy:
   - |
