@@ -19,7 +19,7 @@ import org.gradle.api.tasks.Input;
  */
 public class AppMapPluginExtension {
 
-  public static final String DEFAULT_OUTPUT_DIRECTORY = "appmap";
+  public static final String DEFAULT_OUTPUT_DIRECTORY = "tmp/appmap";
   protected final Project project;
   private final Logger logger = Logger.getLogger("com.appland.appmap.gradle");
   private final Configuration agentConf;
@@ -43,12 +43,12 @@ public class AppMapPluginExtension {
   public AppMapPluginExtension(Project project, Configuration agentConf) {
     this.project = project;
     this.agentConf = agentConf;
-    this.outputDirectory = project.getObjects().directoryProperty()
-        .value(project.getLayout().getBuildDirectory().dir(DEFAULT_OUTPUT_DIRECTORY).get());
     ProjectLayout projectLayout = project.getLayout();
     Directory projectDirectory = projectLayout.getProjectDirectory();
     ObjectFactory projectObjects = project.getObjects();
     this.configFile = projectObjects.fileProperty();
+    this.outputDirectory = projectObjects.directoryProperty()
+        .value(projectDirectory.dir(DEFAULT_OUTPUT_DIRECTORY));
     this.debugFile = projectObjects.fileProperty()
         .value(projectLayout.getBuildDirectory().file("appmap/agent.log").get());
     logger.info("AppMap Plugin Initialized.");
