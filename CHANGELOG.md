@@ -1,3 +1,15 @@
+# [1.2.0](https://github.com/getappmap/appmap-gradle-plugin/compare/v1.1.1...v1.2.0) (2023-09-13)
+
+
+### Bug Fixes
+
+* don't require appmap.configFile ([eaa87c0](https://github.com/getappmap/appmap-gradle-plugin/commit/eaa87c01c59e561d6062c60093bff82acda7bcef))
+
+
+### Features
+
+* default output directory is now tmp/appmap ([2491798](https://github.com/getappmap/appmap-gradle-plugin/commit/2491798db4def431a848a31c2299f6f6330300e1))
+
 ## [1.1.1](https://github.com/applandinc/appmap-gradle-plugin/compare/v1.1.0...v1.1.1) (2021-10-15)
 
 
